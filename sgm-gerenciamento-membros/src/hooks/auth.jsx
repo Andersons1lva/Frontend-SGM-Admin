@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { api } from '../services/api';
-import jwt_decode from 'jwt-decode'
+import { jwtDecode } from 'jwt-decode'
 
 export const AuthContext = createContext({});
 
@@ -11,6 +11,7 @@ function AuthProvider({ children }) {
 
         try {
             const response = await api.post("/sessions", { email, password })
+            console.log(response)
             const { user, token } = response.data;
 
             localStorage.setItem("@sgm:user", JSON.stringify(user));
@@ -57,7 +58,7 @@ function AuthProvider({ children }) {
     useEffect(() => {
         const token = localStorage.getItem('@sgm:token');
         if (token) {
-            const decodedToken = jwt_decode(token);
+            const decodedToken = jwtDecode(token);
             if (Date.now() >= decodedToken.exp * 1000) {
                 localStorage.removeItem('@sgm:token');
                 setData({});
