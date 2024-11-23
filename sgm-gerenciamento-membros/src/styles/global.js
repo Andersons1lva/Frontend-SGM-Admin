@@ -52,4 +52,49 @@ export default createGlobalStyle`
     button:hover, a:hover {
         filter: brightness(0.9);
     }
+    
+    
+
+    /* Adicione estes estilos no seu arquivo CSS */
+    .appRoutes {
+        display: flex;
+        position: relative;
+        height: 100vh;
+        width: 100%;
+    }
+
+    /* Estilos para a Sidebar */
+    .sidebar {
+        height: 100%;
+        position: fixed;
+        left: 0;
+        top: 0;
+        /* Ajuste a largura conforme necessário */
+        width: 250px;
+    }
+
+    /* Estilos para o container principal */
+    .content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        /* Desloca o conteúdo para não sobrepor a sidebar */
+        margin-left: 0px;
+        min-height: 100vh;
+    }
+
+    /* Estilos para a Topbar */
+    .topbar {
+        width: 100%;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
+
+    /* Container para o conteúdo principal abaixo da topbar */
+    .main-content {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+    }
 `;
