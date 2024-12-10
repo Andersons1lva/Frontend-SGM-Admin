@@ -4,7 +4,7 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
 
-  max-width: 110.6rem;
+  max-width: 90.6rem;
   height: 100vh;
 
   margin: auto;
@@ -53,37 +53,37 @@ export const Form = styled.form`
   justify-content: center;
   align-items: left;
 
-  max-width: 47.6rem;
+  max-width: 30.8rem;
   width: 100%;
-  padding: 5rem;
+  padding: 2.5rem;
   border-radius: 1.6rem;
 
   background-color: #1e5245;
 
   > h2 {
     font-family: "Poppins", sans-serif;
-    font-size: 3.2rem;
+    font-size: 1.7rem;
     font-weight: 500;
-    line-height: 6.8rem;
+    line-height: 2rem;
     text-align: center;
 
-    margin-bottom: 3.2rem;
+    margin-bottom: 1.6rem;
   }
 
   > p {
-    margin-top: 2.5rem;
+    margin-top: 1.25rem;
     cursor: pointer;
     text-align: center;
     color: white;
-    font-size: 1.5rem;
+    font-size: 0.77rem;
   }
 
   > .inputs {
-    margin-bottom: 3.2rem;
+    margin-bottom: 1rem;
   }
 
   > .inputs p {
-    font-size: 1.5rem;
+    font-size: 0.75rem;
     margin-bottom: 0.8rem;
     color: white;
   }

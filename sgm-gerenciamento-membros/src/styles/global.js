@@ -7,7 +7,7 @@ export default createGlobalStyle`
         box-sizing: border-box;
     }
     :root {
-        font-size: 62.5%;
+        // font-size: 62.5%;
     }
 
     body {
@@ -49,9 +49,9 @@ export default createGlobalStyle`
         transition: filter 0.2s;
     }
 
-    button:hover, a:hover {
-        filter: brightness(0.9);
-    }
+    // button:hover, a:hover {
+    //     filter: brightness(0.9);
+    // }
     
     
 

@@ -3,10 +3,10 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../components/Header";
-import axios from "axios";
 import { useState } from "react";
+import MembroService from "../../services/MembroService";
 
-const Form = ({initialMemberData, onSubmitSuccess}) => {
+const Form = ({ initialMemberData, onSubmitSuccess }) => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [showAddressFields, setShowAddressFields] = useState(false); // Controle para mostrar/esconder campos do endereço
   const [successMessage, setSuccessMessage] = useState("");
@@ -14,7 +14,7 @@ const Form = ({initialMemberData, onSubmitSuccess}) => {
   // Verifica se é uma edição (se `initialMemberData` for fornecido)
   const isEditMode = Boolean(initialMemberData);
 
-  const handleSubmit = async (values,{resetForm}) => {
+  const handleSubmit = async (values, { resetForm }) => {
     if (!checkoutSchema.isValidSync(values)) {
       console.error("Formulário inválido");
       return;
@@ -29,9 +29,10 @@ const Form = ({initialMemberData, onSubmitSuccess}) => {
         cidade: values.endereco.cidade,
         cep: values.endereco.cep,
       },
-    }
+    };
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("@sgm:token");
+    console.log("token recuperado: ", token);
     if (!token) {
       console.error("Token JWT não encontrado");
       return;
@@ -39,25 +40,19 @@ const Form = ({initialMemberData, onSubmitSuccess}) => {
 
     try {
       let response;
-      if(isEditMode){
-          response = await axios.put(`http://localhost:8080/auth/membros/${initialMemberData.id}`,payload,{
-              headers:{
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json",
-              },
-          });
-          console.log("Membro atualizar com sucesso:", response.data);
-      }else{
-        response = await axios.post("http://localhost:8080/auth/membros", payload,{
-          headers:{
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-          console.log("Membro cadastrado com sucesso:", response.data);
+      if (isEditMode) {
+        response = await MembroService.editMembro();
+        console.log("Membro atualizar com sucesso:", response.data);
+      } else {
+        response = await MembroService.addMembro(payload);
+        console.log("Membro cadastrado com sucesso:", response.data);
       }
 
-      setSuccessMessage(isEditMode ? "Membro atualizado com sucesso!" : "Cadastro realizado com sucesso!");
+      setSuccessMessage(
+        isEditMode
+          ? "Membro atualizado com sucesso!"
+          : "Cadastro realizado com sucesso!"
+      );
       resetForm();
 
       // Chama o callback para notificar que o envio foi bem-sucedido
@@ -68,31 +63,21 @@ const Form = ({initialMemberData, onSubmitSuccess}) => {
       if (error.response && error.response.status === 403) {
         console.error("Erro de autorização");
       } else {
-        console.error("Erro ao cadastrar/atualizar o membro:", error.response ? error.response.data : error.message);
+        console.error(
+          "Erro ao cadastrar/atualizar o membro:",
+          error.response ? error.response.data : error.message
+        );
       }
     }
-    //   const response = await axios.post("http://localhost:8080/auth/membros", payload, {
-    //     headers: {
-    //       "Authorization": `Bearer ${token}`,
-    //       "Content-Type": "application/json",
-    //     },
-    //   });
-    //   console.log("Membro cadastrado com sucesso:", response.data);
-    //   setSuccessMessage("Cadastro realizado com sucesso!"); // Mensagem de sucesso
-    //   resetForm();
-    // } catch (error) {
-    //   if (error.response.status === 403) {
-    //     console.error("Erro de autorização");
-    //   } else {
-    //     console.error("Erro ao cadastrar o membro:", error.response.data);
-    //   }
-    // }
   };
 
   return (
     <Box m="8.4px">
       <Header title="NOVO MEMBRO" />
-      {successMessage && <div style={{ color: "orange" }}>{successMessage}</div>} {/* Mensagem de sucesso */}
+      {successMessage && (
+        <div style={{ color: "orange" }}>{successMessage}</div>
+      )}{" "}
+      {/* Mensagem de sucesso */}
       <Formik
         onSubmit={handleSubmit}
         initialValues={initialValues}
@@ -207,8 +192,12 @@ const Form = ({initialMemberData, onSubmitSuccess}) => {
                     onChange={handleChange}
                     value={values.endereco.numero}
                     name="endereco.numero"
-                    error={!!touched.endereco?.numero && !!errors.endereco?.numero}
-                    helperText={touched.endereco?.numero && errors.endereco?.numero}
+                    error={
+                      !!touched.endereco?.numero && !!errors.endereco?.numero
+                    }
+                    helperText={
+                      touched.endereco?.numero && errors.endereco?.numero
+                    }
                     sx={{ gridColumn: "span 2" }}
                   />
                   <TextField
@@ -220,8 +209,14 @@ const Form = ({initialMemberData, onSubmitSuccess}) => {
                     onChange={handleChange}
                     value={values.endereco.complemento}
                     name="endereco.complemento"
-                    error={!!touched.endereco?.complemento && !!errors.endereco?.complemento}
-                    helperText={touched.endereco?.complemento && errors.endereco?.complemento}
+                    error={
+                      !!touched.endereco?.complemento &&
+                      !!errors.endereco?.complemento
+                    }
+                    helperText={
+                      touched.endereco?.complemento &&
+                      errors.endereco?.complemento
+                    }
                     sx={{ gridColumn: "span 2" }}
                   />
                   <TextField
@@ -246,8 +241,12 @@ const Form = ({initialMemberData, onSubmitSuccess}) => {
                     onChange={handleChange}
                     value={values.endereco.cidade}
                     name="endereco.cidade"
-                    error={!!touched.endereco?.cidade && !!errors.endereco?.cidade}
-                    helperText={touched.endereco?.cidade && errors.endereco?.cidade}
+                    error={
+                      !!touched.endereco?.cidade && !!errors.endereco?.cidade
+                    }
+                    helperText={
+                      touched.endereco?.cidade && errors.endereco?.cidade
+                    }
                     sx={{ gridColumn: "span 2" }}
                   />
                 </>
@@ -366,8 +365,12 @@ const Form = ({initialMemberData, onSubmitSuccess}) => {
                 onChange={handleChange}
                 value={values.funcao_ministerial}
                 name="funcao_ministerial"
-                error={!!touched.funcao_ministerial && !!errors.funcao_ministerial}
-                helperText={touched.funcao_ministerial && errors.funcao_ministerial}
+                error={
+                  !!touched.funcao_ministerial && !!errors.funcao_ministerial
+                }
+                helperText={
+                  touched.funcao_ministerial && errors.funcao_ministerial
+                }
                 sx={{ gridColumn: "span 4" }}
               />
               <TextField
@@ -404,9 +407,13 @@ const Form = ({initialMemberData, onSubmitSuccess}) => {
                 onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.data_tempo_membro}
-                name="data_tempo_membro"
-                error={!!touched.data_tempo_membro && !!errors.data_tempo_membro}
-                helperText={touched.data_tempo_membro && errors.data_tempo_membro}
+                name="tempo_membro"
+                error={
+                  !!touched.data_tempo_membro && !!errors.data_tempo_membro
+                }
+                helperText={
+                  touched.data_tempo_membro && errors.data_tempo_membro
+                }
                 sx={{ gridColumn: "span 4" }}
               />
               {/* Mais campos... */}
@@ -453,7 +460,7 @@ const initialValues = {
   funcao_ministerial: "",
   estado_civil: "",
   data_casamento: "",
-  data_tempo_membro: "",
+  tempo_membro: "",
   // Valores do FormularioEndereco
   endereco: {
     rua: "",
@@ -462,7 +469,6 @@ const initialValues = {
     cidade: "",
     cep: "",
   },
-
 };
 
 export default Form;
