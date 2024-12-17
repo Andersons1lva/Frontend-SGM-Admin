@@ -67,19 +67,21 @@
 
 // export default MembroService;
 
-import axios from 'axios';
-
+import axios from "axios";
 
 // Configuração global do Axios com Interceptor para adicionar o token
-axios.interceptors.request.use((config) => {
-  const token = localStorage.getItem("@sgm:token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`; // Adiciona o token ao cabeçalho
+axios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("@sgm:token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`; // Adiciona o token ao cabeçalho
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-  return config;
-}, (error) => {
-  return Promise.reject(error);
-});
+);
 
 const MembroService = {
   // Buscar todos os membros
@@ -88,7 +90,7 @@ const MembroService = {
       const response = await axios.get("http://localhost:8080/auth/membros");
       return response.data;
     } catch (error) {
-      console.error('Erro ao buscar membros:', error);
+      console.error("Erro ao buscar membros:", error);
       throw error;
     }
   },
@@ -98,7 +100,7 @@ const MembroService = {
     try {
       await axios.delete(`${"http://localhost:8080/auth"}/${id}`);
     } catch (error) {
-      console.error('Erro ao excluir membro:', error);
+      console.error("Erro ao excluir membro:", error);
       throw error;
     }
   },
@@ -107,10 +109,13 @@ const MembroService = {
   addMembro: async (membro) => {
     console.log("Novo membro: ", membro);
     try {
-      const response = await axios.post("http://localhost:8080/auth/membros", membro);
+      const response = await axios.post(
+        "http://localhost:8080/auth/membros",
+        membro
+      );
       return response.data;
     } catch (error) {
-      console.error('Erro ao adicionar membro:', error);
+      console.error("Erro ao adicionar membro:", error);
       throw error;
     }
   },
@@ -118,10 +123,25 @@ const MembroService = {
   // Editar um membro pelo ID
   editMembro: async (id, membroAtualizado) => {
     try {
-      const response = await axios.put(`${"http://localhost:8080/auth/membros"}/${id}`, membroAtualizado);
+      const response = await axios.put(
+        `${"http://localhost:8080/auth/membros"}/${id}`,
+        membroAtualizado
+      );
       return response.data;
     } catch (error) {
-      console.error('Erro ao editar membro:', error);
+      console.error("Erro ao editar membro:", error);
+      throw error;
+    }
+  },
+  
+  aniversarianteDoMes: async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/auth/aniversariantes"
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao buscar aniversariantes:", error);
       throw error;
     }
   },

@@ -137,7 +137,20 @@ const Form = ({ initialMemberData, onSubmitSuccess }) => {
                 name="email"
                 error={!!touched.email && !!errors.email}
                 helperText={touched.email && errors.email}
-                sx={{ gridColumn: "span 4" }}
+                sx={{ gridColumn: "span 2" }}
+              />
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
+                label="Idade"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.idade}
+                name="idade"
+                error={!!touched.idade && !!errors.idade}
+                helperText={touched.idade && errors.idade}
+                sx={{ gridColumn: "span 2" }}
               />
               <TextField
                 fullWidth
@@ -371,7 +384,24 @@ const Form = ({ initialMemberData, onSubmitSuccess }) => {
                 helperText={
                   touched.funcao_ministerial && errors.funcao_ministerial
                 }
-                sx={{ gridColumn: "span 4" }}
+                sx={{ gridColumn: "span 2" }}
+              />
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
+                label="Sexo"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.sexo}
+                name="sexo"
+                error={
+                  !!touched.sexo && !!errors.sexo
+                }
+                helperText={
+                  touched.sexo && errors.sexo
+                }
+                sx={{ gridColumn: "span 2" }}
               />
               <TextField
                 fullWidth
@@ -447,6 +477,7 @@ const initialValues = {
   nome: "",
   sobrenome: "",
   email: "",
+  idade: "",
   numero_celular: "",
   telefone_fixo: "",
   rg: "",
@@ -458,6 +489,7 @@ const initialValues = {
   naturalidade: "",
   nascionalidade: "",
   funcao_ministerial: "",
+  sexo: "",
   estado_civil: "",
   data_casamento: "",
   tempo_membro: "",
