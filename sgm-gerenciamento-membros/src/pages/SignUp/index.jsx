@@ -1,4 +1,4 @@
-import { Container, Form } from "./style";
+import { Container, Form, Select} from "./style";
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 import { AlertModal } from "../../components/AlertaModal";
@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import logoImage from "../../assets/logo_igreja.png";
 
 export function SignUp() {
-  const [name, setName] = useState("");
+  const [role, setRole] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,7 +22,7 @@ export function SignUp() {
   }
 
   function handleSignUp() {
-    if (!name || !email || !password) {
+    if (!email || !password || !role) {
       setAlertMessage("Preencha todos os campos!");
       setShowAlert(true);
       return;
@@ -30,8 +30,7 @@ export function SignUp() {
 
     setLoading(true);
 
-    api
-      .post("/users", { name, email, password })
+    api.post("users/register", { email, password, role })
       .then(() => {
         setAlertMessage("Usuário cadastrado com sucesso!");
         setShowAlert(true);
@@ -67,15 +66,6 @@ export function SignUp() {
         <h2>Crie sua conta</h2>
 
         <div className="inputs">
-          <p>Seu nome</p>
-          <Input
-            placeholder="Exemplo: Maria da Silva"
-            type="text"
-            onChange={(e) => setName(e.target.value)}
-          />
-        </div>
-
-        <div className="inputs">
           <p>Email</p>
           <Input
             placeholder="Exemplo: exemplo@exemplo.com.br"
@@ -91,6 +81,17 @@ export function SignUp() {
             type="password"
             onChange={(e) => setPassword(e.target.value)}
           />
+        </div>
+        <div className="inputs">
+          <p>Papel</p>
+          <Select
+            onChange={(e) => setRole(e.target.value)}
+            value={role}
+          >
+            <option value="" disabled>Selecione o papel</option>
+            <option value="ADMIN">Admin</option>
+            <option value="USER">Usuário</option>
+          </Select>
         </div>
 
         <Button

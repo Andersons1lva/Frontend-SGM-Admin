@@ -12,7 +12,7 @@ export const Container = styled.div`
 
     input {
         width: 100%;
-        height: 4.8rem;
+        height: 3.8rem;
 
         padding: 1.6rem 1.4rem;
         border: 1px solid ${({ theme }) => theme.COLORS.GRAY_200};

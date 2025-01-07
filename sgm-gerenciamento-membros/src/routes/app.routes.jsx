@@ -9,6 +9,8 @@ import Home from "../pages/Home";
 import Formulario from "../pages/Formulario"
 import Membro from "../pages/Membro";
 import Dashboard from "../pages/Dashboard";
+import DetalhesMembro from "../components/DetalhesMembro";
+import Calendario from "../pages/Calendario";
 
 
 export function AppRoutes() {
@@ -27,6 +29,8 @@ export function AppRoutes() {
           <Route path="/formulario" element={<Formulario/>}/>
           <Route path="/membro" element={<Membro/>}/>
           <Route path="/dashboard" element={<Dashboard/>}/>
+          <Route path="/detalhesMembro/:id" element={<DetalhesMembro/>}/>
+          <Route path="/calendario" element={<Calendario/>}/>
         </Routes>
         </main>
       </div>

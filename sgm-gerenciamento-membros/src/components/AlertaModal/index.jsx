@@ -2,7 +2,7 @@ import { Container } from "./styles"
 
 
 
- export function AlertModal({ message, onClose, showLoginButton  }) {
+ export function AlertModal({ message, onClose }) {
   return (
     <Container>
   

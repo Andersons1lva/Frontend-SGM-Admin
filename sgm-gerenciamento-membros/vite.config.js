@@ -6,9 +6,10 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      // Redireciona todas as requisições para '/sessions' para o backend na porta 8080
-      '/sessions': 'http://localhost:8080',
-      '/auth/membros': 'http://localhost:8080'
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      }
     }
   }
 })

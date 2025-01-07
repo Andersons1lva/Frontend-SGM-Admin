@@ -36,13 +36,7 @@ const Dashboard = () => {
 
   const fetchAllData = async () => {
     try {
-      const token = localStorage.getItem("@sgm:token");
-      if (!token) {
-        console.error("Token JWT não encontrado");
-        return;
-      }
-
-      const response = await MembroService.getAllMembros(token);
+      const response = await MembroService.getAllMembros();
 
       if (Array.isArray(response)) {
         setMemberCount(response.length);
@@ -77,13 +71,7 @@ const Dashboard = () => {
 
   const fetchAniversarianteDoMes = async () => {
     try {
-      const token = localStorage.getItem("@sgm:token");
-      if (!token) {
-        console.error("Token JWT não encontrado");
-        return;
-      }
-
-      const response = await MembroService.aniversarianteDoMes(token);
+      const response = await MembroService.aniversarianteDoMes();
       // Verifica se response é um array
       if (Array.isArray(response)) {
         // Filtra os membros que fazem aniversário no mês atual
@@ -399,6 +387,42 @@ const Dashboard = () => {
                 Nenhum aniversariante este mês
               </Typography>
             )}
+          </Box>
+        </Box>
+        <Box
+          gridColumn="span 6"
+          gridRow="span 2"
+          backgroundColor={colors.primary[400]}
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          p="20px"
+          borderRadius="8px"
+        >
+          <Box
+            gridRow="span 1"
+            width="100%"
+            maxHeight="280px"
+            overflow="auto"
+            paddingLeft="15px"
+            sx={{
+              "&::-webkit-scrollbar": {
+                width: "8px",
+              },
+              "&::-webkit-scrollbar-track": {
+                background: colors.primary[400],
+              },
+              "&::-webkit-scrollbar-thumb": {
+                background: colors.greenAccent[500],
+                borderRadius: "4px",
+              },
+              "&::-webkit-scrollbar-thumb:hover": {
+                background: colors.greenAccent[400],
+              },
+              paddingRight: "15px",
+            }}
+          >
           </Box>
         </Box>
       </Box>

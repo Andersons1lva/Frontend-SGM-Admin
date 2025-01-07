@@ -84,7 +84,7 @@ export const Form = styled.form`
 
   > .inputs p {
     font-size: 0.75rem;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.8px;
     color: white;
   }
 
@@ -95,5 +95,36 @@ export const Form = styled.form`
     h2 {
       display: none;
     }
+  }
+`;
+
+export const Select = styled.select`
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  border: px  white;
+  border-radius: 8px;
+  background-color:transparent;
+  color: gray;
+  font-size: 16px;
+  outline: none;
+  cursor: pointer;
+
+  &:focus {
+    border-color: #007bff; /* Cor de foco */
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
+    background-color: #fff;
+  }
+`;
+
+export const Option = styled.option`
+  background-color: #fff;
+  color: #333;
+  padding: 10px;
+  font-size: 16px;
+
+  &:hover {
+    background-color: #007bff;
+    color: #fff;
   }
 `;

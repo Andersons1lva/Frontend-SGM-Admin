@@ -83,11 +83,14 @@ axios.interceptors.request.use(
   }
 );
 
+const BASE_URL = "/api/auth";
+const MEMBROS_URL = `${BASE_URL}/membros`;
+
 const MembroService = {
   // Buscar todos os membros
   getAllMembros: async () => {
     try {
-      const response = await axios.get("http://localhost:8080/auth/membros");
+      const response = await axios.get(MEMBROS_URL);
       return response.data;
     } catch (error) {
       console.error("Erro ao buscar membros:", error);
@@ -95,10 +98,20 @@ const MembroService = {
     }
   },
 
+  buscarPorId: async (id) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao buscar membros por id:", error);
+      throw error;
+    }
+  },
+
   // Excluir um membro pelo ID
   deleteMembro: async (id) => {
     try {
-      await axios.delete(`${"http://localhost:8080/auth"}/${id}`);
+      await axios.delete(`${BASE_URL}/${id}`);
     } catch (error) {
       console.error("Erro ao excluir membro:", error);
       throw error;
@@ -109,10 +122,7 @@ const MembroService = {
   addMembro: async (membro) => {
     console.log("Novo membro: ", membro);
     try {
-      const response = await axios.post(
-        "http://localhost:8080/auth/membros",
-        membro
-      );
+      const response = await axios.post(MEMBROS_URL, membro);
       return response.data;
     } catch (error) {
       console.error("Erro ao adicionar membro:", error);
@@ -121,24 +131,29 @@ const MembroService = {
   },
 
   // Editar um membro pelo ID
-  editMembro: async (id, membroAtualizado) => {
+  editMembro: async (id, membro) => {
     try {
-      const response = await axios.put(
-        `${"http://localhost:8080/auth/membros"}/${id}`,
-        membroAtualizado
-      );
+      const response = await axios.put(`${MEMBROS_URL}/${id}`, membro, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
       return response.data;
     } catch (error) {
-      console.error("Erro ao editar membro:", error);
+      if (error.response) {
+        console.error("Erro na resposta:", {
+          status: error.response.status,
+          data: error.response.data,
+          headers: error.response.headers
+        });
+      }
       throw error;
     }
   },
   
   aniversarianteDoMes: async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:8080/auth/aniversariantes"
-      );
+      const response = await axios.get(`${BASE_URL}/aniversariantes`);
       return response.data;
     } catch (error) {
       console.error("Erro ao buscar aniversariantes:", error);

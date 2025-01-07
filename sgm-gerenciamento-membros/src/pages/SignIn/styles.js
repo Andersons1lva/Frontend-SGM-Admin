@@ -84,7 +84,7 @@ export const Form = styled.form`
 
   > .inputs p {
     font-size: 0.75rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8px;
     color: white;
   }
 

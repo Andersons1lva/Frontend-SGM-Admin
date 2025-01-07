@@ -8,7 +8,7 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 // import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-// import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
+import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 // import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 // import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
 // import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutlined";
@@ -43,8 +43,8 @@ const Sidebar = () => {
 
   return (
     <Box
-      sx={{
-        "& .pro-sidebar-inner": {
+      sx={{        
+        "& .pro-sidebar-inner": {          
           background: `${colors.primary[400]} !important`,
         },
         "& .pro-icon-wrapper": {
@@ -95,7 +95,7 @@ const Sidebar = () => {
                 <img
                   alt="profile-user"
                   width="100px"
-                  height="100px"
+                  height="auto"
                   src={logoImage} //imagem de perfil
                   style={{ cursor: "pointer", borderRadius: "50%" }}
                 />
@@ -147,21 +147,21 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
 
-            {/* <Typography
+            <Typography
               variant="h6"
               color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 20px" }}
+              sx={{ m: "15px 0 5px 12px" }}
             >
-              Pages
+              Eventos
             </Typography>            
             <Item
-              title="Calendar"
-              to="/calendar"
+              title="Calendario"
+              to="/calendario"
               icon={<CalendarTodayOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
-            <Item
+            {/* <Item
               title="FAQ Page"
               to="/faq"
               icon={<HelpOutlineOutlinedIcon />}

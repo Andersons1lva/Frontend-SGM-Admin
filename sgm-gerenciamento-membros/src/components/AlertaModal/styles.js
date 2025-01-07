@@ -22,7 +22,7 @@ export const Container = styled.div`
   gap: 10px;
   justify-content:center;
   align-items:center;
-  background-color: ${({ theme }) => theme.COLORS.BACKGROUND_600};
+  background-color: #1e5245;
   padding: 20px;
   border-radius: 4px;
   text-align: center;
@@ -37,7 +37,7 @@ export const Container = styled.div`
 .alert-modal button {
   width: 340px;
   padding: 8px 16px;
-  background-color: ${({ theme }) => theme.COLORS.BLUE_400};
+  background-color: #70d8bd;
   color: #fff;
   border: none;
   border-radius: 4px;

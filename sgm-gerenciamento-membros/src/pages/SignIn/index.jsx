@@ -17,6 +17,11 @@ export function SignIn() {
   const navigate = useNavigate();
 
   function handleSignIn() {
+    if (!email || !password) {
+      setAlertMessage("Preencha todos os campos!");
+      setShowAlert(true);
+      return;
+    }
     signIn({ email, password })
       .then(() => {
         setLoading(false);
@@ -26,8 +31,9 @@ export function SignIn() {
         }
       })
       .catch((error) => {
-        setAlertMessage(error.message);
-        setShowAlert(true);
+          setAlertMessage("Não foi possível logar, servidor está fora." + error.message);
+          setShowAlert(true);        
+        
         setLoading(false);
       });
   }
