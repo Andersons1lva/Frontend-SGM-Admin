@@ -28,6 +28,16 @@ export const CalendarioService =  {
             return [];
         }
     },
+
+    getEventosDoMes: async () =>{
+        try {
+            const response = await axios.get(`${EVENTO_URL}/mes_atual`)
+            return response.data
+        } catch (error) {
+            console.error('Erro ao buscar eventos do mês:', error);
+            throw error;
+        }
+    },
     
     criarEventos: async (eventoData) => {
         try{
@@ -37,7 +47,7 @@ export const CalendarioService =  {
                 fim: eventoData.end,
                 dia_todo: eventoData.allDay
             };
-            const response = axios.post(EVENTO_URL, eventoPayload);
+            const response = await axios.post(EVENTO_URL, eventoPayload);
             return response.data;
         }catch(error){
             console.error("Erro ao criar evento:", error);

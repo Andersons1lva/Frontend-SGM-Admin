@@ -61,16 +61,12 @@ const Calendar = () => {
 
         const createdEvent = await calendarioService.criarEventos(newEvento);
 
-        if (!createdEvent || !createdEvent.id) {
-          throw new Error("Evento criado, mas ID não retornado pela API.");
-        }
-
         calendarApi.addEvent({
-          // id: createdEvent.id || "default-id",
-          title: createdEvent.title,
-          start: createdEvent.start,
-          end: createdEvent.end,
-          allDay: createdEvent.allDay,
+          id: createdEvent.id,
+          title: createdEvent.titulo,
+          start: createdEvent.inicio,
+          end: createdEvent.fim,
+          allDay: createdEvent.dia_todo,
         });
         await loadEvents();
       } catch (error) {
@@ -106,6 +102,7 @@ const Calendar = () => {
       <Box display="flex" justifyContent="space-between">
         {/* CALENDAR SIDEBAR */}
         <Box
+          paddingRight="15px"
           sx={{
             maxHeight: "73.3vh", // altura máxima
             minWidth: "10vh",
@@ -186,168 +183,3 @@ const Calendar = () => {
 };
 
 export default Calendar;
-
-// import { useState, useEffect } from "react";
-// import FullCalendar from "@fullcalendar/react";
-// import dayGridPlugin from "@fullcalendar/daygrid";
-// import timeGridPlugin from "@fullcalendar/timegrid";
-// import interactionPlugin from "@fullcalendar/interaction";
-// import listPlugin from "@fullcalendar/list";
-// import {
-//   Box,
-//   List,
-//   ListItem,
-//   ListItemText,
-//   Typography,
-//   useTheme,
-// } from "@mui/material";
-// import Header from "../../components/Header";
-// import { tokens } from "../../styles/theme";
-// import calendarioService from "../../services/CalendarioService";
-// import { format } from "date-fns";
-// import { ptBR } from "date-fns/locale";
-
-// const Calendar = () => {
-//   const theme = useTheme();
-//   const colors = tokens(theme.palette.mode);
-//   const [events, setEvents] = useState([]);
-//   const [setIsLoading] = useState(true);
-//   const [setError] = useState(null);
-
-//   const formatEventDate = (date) => {
-//     if (!date) return "";
-//     return format(new Date(date), "d 'de' MMM 'de' yyyy", { locale: ptBR });
-//   };
-
-//   // Função para buscar eventos usando o serviço
-//   const fetchEvents = async () => {
-//     try {
-//       const response = await calendarioService.getAllEventos();
-//       setEvents(response.data);
-//     } catch (err) {
-//       // setError("Falha ao carregar os eventos");
-//     }
-//   };
-
-//   // Carrega os eventos quando o componente é montado
-//   useEffect(() => {
-//     fetchEvents();
-//     formatEventDate();
-//   }, []);
-
-//   // Função para criar evento
-//   const handleDateClick = async (selected) => {
-//     const titulo = prompt("Por favor, digite um título para o evento");
-//     const calendarApi = selected.view.calendar;
-//     calendarApi.unselect();
-
-//     if (titulo) {
-//       const newEvent = {
-//         titulo,
-//         inicio: selected.startStr,
-//         fim: selected.endStr,
-//         dia_todo: selected.allDay,
-//       };
-
-//       try {
-//         const response = await calendarioService.criarEventos(newEvent);
-//         calendarApi.addEvent(response.data);
-//       } catch (err) {
-//         alert("Falha ao criar evento",err);
-//       }
-//     }
-//   };
-
-//   // Função para deletar evento
-//   const handleEventClick = async (selected) => {
-//     if (
-//       window.confirm(
-//         `Tem certeza que deseja deletar o evento '${selected.event.titulo}'`
-//       )
-//     ) {
-//       try {
-//         await calendarioService.deleteEventos(selected.event.id);
-//         selected.event.remove();
-//       } catch (err) {
-//         alert("Falha ao deletar evento");
-//       }
-//     }
-//   };
-
-//   return (
-//     <Box m="20px">
-//       <Header title="Calendário" subtitle="Página Interativa do Calendário" />
-
-//       <Box display="flex" justifyContent="space-between">
-//         {/* BARRA LATERAL DO CALENDÁRIO */}
-//         <Box
-//           flex="1 1 20%"
-//           backgroundColor={colors.primary[400]}
-//           p="15px"
-//           borderRadius="4px"
-//         >
-//           <Typography variant="h5">Eventos</Typography>
-//           <List>
-
-//               {events.map((events) => (
-//                 <ListItem
-//                   key={events.id}
-//                   sx={{
-//                     backgroundColor: colors.greenAccent[500],
-//                     margin: "10px 0",
-//                     borderRadius: "2px",
-//                   }}
-//                 >
-//                   <ListItemText
-//                     primary={events.titulo}
-//                     secondary={
-//                       <Typography>
-//                         {formatDate(events.start, {
-//                           year: "numeric",
-//                           month: "short",
-//                           day: "numeric",
-//                         })}
-//                       </Typography>
-//                     }
-//                   />
-//                 </ListItem>
-//               ))}
-
-//               <Typography>Nenhum evento para exibir</Typography>
-
-//           </List>
-//         </Box>
-
-//         {/* CALENDÁRIO */}
-//         <Box flex="1 1 100%" ml="15px">
-//           <FullCalendar
-//             height="75vh"
-//             plugins={[
-//               dayGridPlugin,
-//               timeGridPlugin,
-//               interactionPlugin,
-//               listPlugin,
-//             ]}
-//             headerToolbar={{
-//               left: "prev,next today",
-//               center: "title",
-//               right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth",
-//             }}
-//             initialView="dayGridMonth"
-//             editable={true}
-//             selectable={true}
-//             selectMirror={true}
-//             dayMaxEvents={true}
-//             select={handleDateClick}
-//             eventClick={handleEventClick}
-//             eventSet ={(events)=> setEvents(events)}
-//             initialEvents={[events]}
-//             locale="pt-br"
-//           />
-//         </Box>
-//       </Box>
-//     </Box>
-//   );
-// };
-
-// export default Calendar;

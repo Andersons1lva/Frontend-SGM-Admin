@@ -7,6 +7,7 @@ import BoyIcon from "@mui/icons-material/Boy";
 import ManIcon from "@mui/icons-material/Man";
 import WomanIcon from "@mui/icons-material/Woman2";
 import CakeIcon from "@mui/icons-material/Cake";
+import EventNote from "@mui/icons-material/EventNote";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import Header from "../../components/Header";
 import LineChart from "../../components/LineChart";
@@ -15,6 +16,9 @@ import StatBox from "../../components/StatBox";
 import ProgressCircle from "../../components/ProgressCircle";
 import { useEffect, useState } from "react";
 import MembroService from "../../services/MembroService";
+import CalendarioService from "../../services/CalendarioService";
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 const Dashboard = () => {
   const theme = useTheme();
@@ -32,6 +36,8 @@ const Dashboard = () => {
   const [progressCasais, setProgressCasais] = useState(0);
   const [progressSolteiros, setProgressSolterios] = useState(0);
   const [progressMembro, setProgressMembro] = useState(0);
+  const [eventosDoMes, setEventosDoMes] = useState([]);
+  const mesAtual = new Date().toLocaleString("pt-BR", { month: "long" });
 
 
   const fetchAllData = async () => {
@@ -94,19 +100,79 @@ const Dashboard = () => {
     }
   };
 
+  const downloadPDFReport = async () => {
+    try {
+      // Captura o elemento do dashboard
+      const dashboardElement = document.getElementById('dashboard-content');
+      if (!dashboardElement) {
+        alert('Elemento "dashboard-content" não encontrado no DOM.');
+        return;
+      }
+      
+      // Configurações do PDF
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      
+      // Converte o elemento em canvas
+      const canvas = await html2canvas(dashboardElement, {
+        scale: 2, // Melhor qualidade
+        backgroundColor: colors.primary[500], // Mantém a cor de fundo
+      });
+      
+      // Adiciona a imagem do canvas ao PDF
+      const imgData = canvas.toDataURL('image/png');
+      const imgWidth = pageWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      
+      // Faz o download
+      pdf.save(`dashboard-relatorio-${new Date().toLocaleDateString()}.pdf`);
+    } catch (error) {
+      console.error('Erro ao gerar PDF:', error);
+      alert('Erro ao gerar o relatório');
+    }
+  };
+
+  const fetchEventosDoMes = async () => {
+    try {
+      const response = await CalendarioService.getEventosDoMes();
+      if (Array.isArray(response)) {
+        // Formata os eventos para exibição
+        const eventosFormatados = response
+        .map(evento => {
+          const data = new Date(evento.inicio + "T00:00:00");
+          const dia = data.getDate();
+          return {
+            titulo: `${evento.titulo}`,
+            dia,
+          };
+        }).sort((a, b) => a.dia - b.dia); // Ordena por dia do mês
+
+        setEventosDoMes(eventosFormatados);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar eventos:", error);
+      setEventosDoMes([]);
+    }
+  };
+
   useEffect(() => {
     fetchAllData();
     fetchAniversarianteDoMes();
+    fetchEventosDoMes([]);
   }, []);
 
   return (
-    <Box m="20px">
+    <Box id="dashboard-content" m="20px">
       {/* HEADER */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Header title="DASHBOARD" subtitle="Bem-vindo ao seu painel" />
 
         <Box>
           <Button
+            onClick={downloadPDFReport}
             sx={{
               backgroundColor: colors.blueAccent[700],
               color: colors.grey[100],
@@ -314,8 +380,9 @@ const Dashboard = () => {
             color={colors.grey[100]}
             mb="20px"
             paddingLeft="15px"
+            textAlign="center"
           >
-            Aniversariantes do Mês
+            Aniversariantes de {mesAtual.charAt(0).toUpperCase() + mesAtual.slice(1)}
           </Typography>
 
           <Box
@@ -400,6 +467,23 @@ const Dashboard = () => {
           p="20px"
           borderRadius="8px"
         >
+          <EventNote
+            sx={{
+              color: colors.greenAccent[600],
+              fontSize: "26px",
+              mb: "10px",
+            }}
+          />
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            color={colors.grey[100]}
+            mb="20px"
+            paddingLeft="15px"
+            textAlign="center"
+          >
+            Eventos de {mesAtual.charAt(0).toUpperCase() + mesAtual.slice(1)}
+          </Typography>
           <Box
             gridRow="span 1"
             width="100%"
@@ -423,6 +507,52 @@ const Dashboard = () => {
               paddingRight: "15px",
             }}
           >
+            {Array.isArray(eventosDoMes) &&
+            eventosDoMes.length > 0 ? (
+              eventosDoMes.map((evento, index) => (
+                <Box
+                  key={index}
+                  display="flex"
+                  alignItems="center"
+                  p="2px"
+                  borderBottom={`1px solid ${colors.grey[700]}`}
+                  sx={{
+                    "&:last-child": {
+                      borderBottom: "none",
+                    },
+                  }}
+                >
+                  <Typography
+                    variant="h6"
+                    color={colors.grey[100]}
+                    paddingLeft="10px"
+                  >
+                    <span
+                      style={{
+                        color: colors.greenAccent[500],
+                        fontWeight: "bold",
+                        marginRight: "10px",
+                      }}
+                    >
+                      {evento.dia} -
+                    </span>
+                    <span
+                      style={{ color: colors.grey[100], fontWeight: "bold" }}
+                    >
+                      {evento.titulo}
+                    </span>
+                  </Typography>
+                </Box>
+              ))
+            ) : (
+              <Typography
+                variant="h6"
+                color={colors.grey[100]}
+                textAlign="center"
+              >
+                Nenhum evento este mês
+              </Typography>
+            )}
           </Box>
         </Box>
       </Box>
