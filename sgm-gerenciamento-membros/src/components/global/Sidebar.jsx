@@ -162,7 +162,7 @@ const Sidebar = () => {
               Eventos
             </Typography>            
             <Item
-              title="Calendario"
+              title="Calendário"
               to="/calendario"
               icon={<CalendarTodayOutlinedIcon />}
               selected={selected}
