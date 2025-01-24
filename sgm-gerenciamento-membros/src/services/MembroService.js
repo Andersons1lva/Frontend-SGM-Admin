@@ -83,13 +83,14 @@ axios.interceptors.request.use(
   }
 );
 
-const BASE_URL = "/membros";
+const BASE_URL = "/api/auth";
+const MEMBROS_URL = `${BASE_URL}/membros`;
 
 const MembroService = {
   // Buscar todos os membros
   getAllMembros: async () => {
     try {
-      const response = await axios.get(BASE_URL);
+      const response = await axios.get(MEMBROS_URL);
       return response.data;
     } catch (error) {
       console.error("Erro ao buscar membros:", error);
@@ -121,7 +122,7 @@ const MembroService = {
   addMembro: async (membro) => {
     console.log("Novo membro: ", membro);
     try {
-      const response = await axios.post(BASE_URL, membro);
+      const response = await axios.post(MEMBROS_URL, membro);
       return response.data;
     } catch (error) {
       console.error("Erro ao adicionar membro:", error);
@@ -132,7 +133,7 @@ const MembroService = {
   // Editar um membro pelo ID
   editMembro: async (id, membro) => {
     try {
-      const response = await axios.put(`${BASE_URL}/${id}`, membro, {
+      const response = await axios.put(`${MEMBROS_URL}/${id}`, membro, {
         headers: {
           'Content-Type': 'application/json'
         }
