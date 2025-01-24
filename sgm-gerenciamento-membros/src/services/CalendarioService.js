@@ -14,8 +14,7 @@ axios.interceptors.request.use(
     }
 );
 
-const BASE_URL = "/api/auth";
-const EVENTO_URL = `${BASE_URL}/eventos`;
+const EVENTO_URL = "/eventos";
 
 export const CalendarioService =  {
 
