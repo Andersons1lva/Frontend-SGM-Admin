@@ -1,4 +1,4 @@
-import { Box, IconButton, useTheme } from "@mui/material";
+import { Box, IconButton, useTheme, useMediaQuery } from "@mui/material";
 import { useContext } from "react";
 import { ColorModeContext, tokens } from "../../styles/theme";
 import InputBase from "@mui/material/InputBase";
@@ -8,37 +8,47 @@ import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import SearchIcon from "@mui/icons-material/Search";
-import { ExitToApp} from "@mui/icons-material";
-// import UserServices from "../../services/UserService";
-import { useNavigate } from 'react-router-dom'
+import { ExitToApp, MenuOutlined } from "@mui/icons-material";
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../hooks/auth";
 
-const Topbar = () => {
+const Topbar = ({ isCollapsed, toggleSidebar }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
-  const {signOut} = useAuth();
-//   const userService = new UserServices();  // Instância do UserService
+  const { signOut } = useAuth();
   const navigate = useNavigate();
+
+  // Verifica se a tela é mobile (largura <= 768px)
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const handleLogout = () => {
     signOut();
-    // userService.logout();  // Chama o logout do serviço
-    navigate("/");    // Redireciona o usuário para a página de login
+    navigate("/");
   };
 
   return (
     <Box display="flex" justifyContent="space-between" p={2}>
-      {/* SEARCH BAR */}
-      <Box
-        display="flex"
-        backgroundColor={colors.primary[400]}
-        borderRadius="3px"
-      >
-        <InputBase sx={{ ml: 2, flex: 1 }} placeholder="Search" />
-        <IconButton type="button" sx={{ p: 1 }}>
-          <SearchIcon />
-        </IconButton>
+      {/* SEARCH BAR AND MENU BUTTON */}
+      <Box display="flex" alignItems="center">
+        {/* Botão de menu hambúrguer (visível apenas em mobile ou quando a sidebar está colapsada) */}
+        {(isMobile) && (
+          <IconButton onClick={toggleSidebar} sx={{ mr: 2 }}>
+            <MenuOutlined />
+          </IconButton>
+        )}
+
+        {/* Barra de pesquisa */}
+        <Box
+          display="flex"
+          backgroundColor={colors.primary[400]}
+          borderRadius="3px"
+        >
+          <InputBase sx={{ ml: 2, flex: 1 }} placeholder="Search" />
+          <IconButton type="button" sx={{ p: 1 }}>
+            <SearchIcon />
+          </IconButton>
+        </Box>
       </Box>
 
       {/* ICONS */}
@@ -68,7 +78,4 @@ const Topbar = () => {
 };
 
 export default Topbar;
-
-
-
 

@@ -83,8 +83,8 @@ axios.interceptors.request.use(
   }
 );
 
-const BASE_URL = "/api/auth";
-const MEMBROS_URL = `${BASE_URL}/membros`;
+const BASE_URL = import.meta.env.VITE_API_URL;
+const MEMBROS_URL = `${BASE_URL}/auth/membros`;
 
 const MembroService = {
   // Buscar todos os membros
@@ -100,7 +100,7 @@ const MembroService = {
 
   buscarPorId: async (id) => {
     try {
-      const response = await axios.get(`${BASE_URL}/${id}`);
+      const response = await axios.get(`${BASE_URL}/auth/${id}`);
       return response.data;
     } catch (error) {
       console.error("Erro ao buscar membros por id:", error);
@@ -111,7 +111,7 @@ const MembroService = {
   // Excluir um membro pelo ID
   deleteMembro: async (id) => {
     try {
-      await axios.delete(`${BASE_URL}/${id}`);
+      await axios.delete(`${BASE_URL}/auth/${id}`);
     } catch (error) {
       console.error("Erro ao excluir membro:", error);
       throw error;
@@ -153,7 +153,7 @@ const MembroService = {
   
   aniversarianteDoMes: async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/aniversariantes`);
+      const response = await axios.get(`${BASE_URL}/auth/aniversariantes`);
       return response.data;
     } catch (error) {
       console.error("Erro ao buscar aniversariantes:", error);

@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState} from "react";
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import './pro-sidebar-custom.css';
-import { Box, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, Typography, useTheme, useMediaQuery } from "@mui/material";
 import { Link } from "react-router-dom";
 import { tokens } from "../../styles/theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
@@ -11,7 +11,7 @@ import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import logoImage from "../../assets/logo_igreja.png";
 
-const Item = ({ title, to, icon, selected, setSelected }) => {
+const Item = ({ title, to, icon, selected, setSelected, isCollapsed }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   return (
@@ -23,34 +23,25 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
       onClick={() => setSelected(title)}
       icon={icon}
     >
-      <Typography>{title}</Typography>
+      {!isCollapsed && <Typography>{title}</Typography>}
       <Link to={to} />
     </MenuItem>
   );
 };
 
-const Sidebar = () => {
+const Sidebar = ({ isCollapsed, toggleSidebar }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [isCollapsed, setIsCollapsed] = useState(() => {
-    const saved = localStorage.getItem('sidebarCollapsed');
-    return saved ? JSON.parse(saved) : false;
-  });
   const [selected, setSelected] = useState("Home");
-
-  // Atualiza o localStorage quando o estado muda
-  useEffect(() => {
-    localStorage.setItem('sidebarCollapsed', JSON.stringify(isCollapsed));
-  }, [isCollapsed]);
-
-  // Função para alternar o estado da sidebar
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
-  };
 
   return (
     <Box
-      sx={{        
+      sx={{
+        "& .pro-sidebar": {
+          minWidth: isCollapsed ? "80px !important" : "250px !important",
+          width: isCollapsed ? "80px !important" : "250px !important",
+          transition: "width 0.3s ease-in-out",
+        },        
         "& .pro-sidebar-inner": {          
           background: `${colors.primary[400]} !important`,
         },
@@ -66,6 +57,15 @@ const Sidebar = () => {
         "& .pro-menu-item.active": {
           color: "#6870fa !important",
         },
+        "@media (max-width: 768px)": {
+          position: "fixed",
+          zIndex: 1000,
+          height: "100vh",
+          "& .pro-sidebar": {
+            position: isCollapsed ? "fixed" : "relative",
+            left: isCollapsed ? "-80px" : "0",
+          }
+        }
       }}
     >
       <ProSidebar collapsed={isCollapsed}>
@@ -73,7 +73,7 @@ const Sidebar = () => {
           {/* LOGO AND MENU ICON */}
           <MenuItem
             onClick={toggleSidebar}
-            icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
+            icon={<MenuOutlinedIcon />}
             style={{
               margin: "10px 0 20px 0",
               color: colors.grey[100],
@@ -89,9 +89,6 @@ const Sidebar = () => {
                 <Typography variant="h3" color={colors.grey[100]}>
                   SGM
                 </Typography>
-                <IconButton onClick={toggleSidebar}>
-                  <MenuOutlinedIcon />
-                </IconButton>
               </Box>
             )}
           </MenuItem>
@@ -103,7 +100,7 @@ const Sidebar = () => {
                   alt="profile-user"
                   width="100px"
                   height="auto"
-                  src={logoImage} //imagem de perfil
+                  src={logoImage}
                   style={{ cursor: "pointer", borderRadius: "50%" }}
                 />
               </Box>
@@ -130,21 +127,25 @@ const Sidebar = () => {
               icon={<HomeOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
+              isCollapsed={isCollapsed}
             />
 
-            <Typography
-              variant="h6"
-              color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 10px" }}
-            >
-              Membros
-            </Typography>
+            {!isCollapsed && (
+              <Typography
+                variant="h6"
+                color={colors.grey[300]}
+                sx={{ m: "15px 0 5px 10px" }}
+              >
+                Membros
+              </Typography>
+            )}
             <Item
               title="Novo Membro"
               to="/formulario"
               icon={<PersonOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
+              isCollapsed={isCollapsed}
             />
             <Item
               title="Gerenciar Membros"
@@ -152,22 +153,26 @@ const Sidebar = () => {
               icon={<PeopleOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
+              isCollapsed={isCollapsed}
             />
 
-            <Typography
-              variant="h6"
-              color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 12px" }}
-            >
-              Eventos
-            </Typography>            
+            {!isCollapsed && (
+              <Typography
+                variant="h6"
+                color={colors.grey[300]}
+                sx={{ m: "15px 0 5px 12px" }}
+              >
+                Eventos
+              </Typography>
+            )}
             <Item
               title="Calendário"
               to="/calendario"
               icon={<CalendarTodayOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
-            />            
+              isCollapsed={isCollapsed}
+            />
           </Box>
         </Menu>
       </ProSidebar>

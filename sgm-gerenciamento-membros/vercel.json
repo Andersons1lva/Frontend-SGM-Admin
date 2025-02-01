@@ -1,7 +1,8 @@
 {
-  "build": {
-    "env": {
-      "NODE_VERSION": "16.14.0"
-    }
-  }
+  "rewrites": [
+      {
+          "source": "/(.*)",
+          "destination": "/index.html"
+      }
+  ]
 }

@@ -69,7 +69,7 @@ const DetalhesMembro = () => {
       <Paper elevation={3} sx={{ p: 1.5, background: `${colors.primary[400]} !important`}}>
         {/* Título */}
         <Typography variant="h1" gutterBottom>
-          {membro.nome} {membro.sobreNome}
+          {membro.nome} {membro.sobrenome}
         </Typography>
 
         {/* Informações Pessoais */}
@@ -80,7 +80,7 @@ const DetalhesMembro = () => {
           <InfoField label="Idade" value={membro.idade} />
           <InfoField label="RG" value={membro.rg} />
           <InfoField label="CPF" value={membro.cpf} />
-          <InfoField label="Estado Civil" value={membro.estadoCivil} />
+          <InfoField label="Estado Civil" value={membro.estado_civil} />
           <InfoField label="Nacionalidade" value={membro.nascionalidade} />
           <InfoField label="Naturalidade" value={membro.naturalidade} />
           <InfoField label="Sexo" value={membro.sexo} />

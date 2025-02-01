@@ -15,15 +15,20 @@ import Calendario from "../pages/Calendario";
 
 export function AppRoutes() {
   const [theme, colorMode] = useMode();
-  const [isSidebar, setIsSidebar] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
   return (
     <ColorModeContext.Provider value={colorMode}>
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <div className="appRoutes">
-        <Sidebar isSidebar={isSidebar} />
+        <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
         <main className="content">
-        <Topbar setIsSidebar={setIsSidebar} />
+        <Topbar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/formulario" element={<Formulario/>}/>

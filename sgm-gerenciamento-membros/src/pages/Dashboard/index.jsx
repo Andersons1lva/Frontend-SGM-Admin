@@ -16,6 +16,7 @@ import MembroService from "../../services/MembroService";
 import CalendarioService from "../../services/CalendarioService";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import moment from 'moment';
 
 const Dashboard = () => {
   const theme = useTheme();
@@ -35,7 +36,7 @@ const Dashboard = () => {
   const [progressMembro, setProgressMembro] = useState(0);
   const [eventosDoMes, setEventosDoMes] = useState([]);
   const mesAtual = new Date().toLocaleString("pt-BR", { month: "long" });
-
+  
 
   const fetchAllData = async () => {
     try {
@@ -45,8 +46,8 @@ const Dashboard = () => {
         setMemberCount(response.length);
         setTotalHomens(response.filter((m) => m.sexo === "Masculino").length);
         setTotalMulheres(response.filter((m) => m.sexo === "Feminino").length);
-        setTotalCasais(response.filter((m) => m.estadoCivil === "Casado").length);
-        setTotalSolteiros(response.filter((m) => m.estadoCivil === "Solteiro").length);
+        setTotalCasais(response.filter((m) => m.estado_civil === "Casado").length);
+        setTotalSolteiros(response.filter((m) => m.estado_civil === "Solteiro").length);
         setJovens(response.filter((m) => m.idade >= 15 && m.idade <= 35).length);
 
         // Calcular progresso
@@ -56,10 +57,10 @@ const Dashboard = () => {
         setProgressMulheres((response.filter((m) => m.sexo === "Feminino").length / response.length
           ).toFixed(2)
         );
-        setProgressCasais((response.filter((m) => m.estadoCivil === "Casado").length / response.length
+        setProgressCasais((response.filter((m) => m.estado_civil === "Casado").length / response.length
           ).toFixed(2)
         );
-        setProgressSolterios((response.filter((m) => m.estadoCivil === "Solteiro").length / response.length
+        setProgressSolterios((response.filter((m) => m.estado_civil === "Solteiro").length / response.length
           ).toFixed(2)
         );
         setProgressJovens((response.filter((m) => m.idade >= 15 && m.idade <= 35).length / response.length
@@ -83,7 +84,7 @@ const Dashboard = () => {
             const data = new Date(membro.data_nascimento + "T00:00:00");
             const dia = data.getDate();
             return {
-              nome: `${membro.nome} ${membro.sobreNome}`,
+              nome: `${membro.nome} ${membro.sobrenome}`,
               dia,
             };
           })
@@ -507,6 +508,7 @@ const Dashboard = () => {
             {Array.isArray(eventosDoMes) &&
             eventosDoMes.length > 0 ? (
               eventosDoMes.map((evento, index) => (
+                
                 <Box
                   key={index}
                   display="flex"
@@ -531,7 +533,7 @@ const Dashboard = () => {
                         marginRight: "10px",
                       }}
                     >
-                      {evento.dia} -
+                      {evento.dia}   -
                     </span>
                     <span
                       style={{ color: colors.grey[100], fontWeight: "bold" }}
