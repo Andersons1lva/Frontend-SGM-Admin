@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, Button, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../styles/theme";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import EmojiPeopleIcon from "@mui/icons-material/EmojiPeople";
@@ -14,9 +14,9 @@ import StatBox from "../../components/StatBox";
 import { useEffect, useState } from "react";
 import MembroService from "../../services/MembroService";
 import CalendarioService from "../../services/CalendarioService";
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
-import moment from 'moment';
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import moment from "moment";
 
 const Dashboard = () => {
   const theme = useTheme();
@@ -36,7 +36,6 @@ const Dashboard = () => {
   const [progressMembro, setProgressMembro] = useState(0);
   const [eventosDoMes, setEventosDoMes] = useState([]);
   const mesAtual = new Date().toLocaleString("pt-BR", { month: "long" });
-  
 
   const fetchAllData = async () => {
     try {
@@ -46,27 +45,50 @@ const Dashboard = () => {
         setMemberCount(response.length);
         setTotalHomens(response.filter((m) => m.sexo === "Masculino").length);
         setTotalMulheres(response.filter((m) => m.sexo === "Feminino").length);
-        setTotalCasais(response.filter((m) => m.estado_civil === "Casado").length);
-        setTotalSolteiros(response.filter((m) => m.estado_civil === "Solteiro").length);
-        setJovens(response.filter((m) => m.idade >= 15 && m.idade <= 35).length);
+        setTotalCasais(
+          response.filter((m) => m.estado_civil === "Casado").length
+        );
+        setTotalSolteiros(
+          response.filter((m) => m.estado_civil === "Solteiro").length
+        );
+        setJovens(
+          response.filter((m) => m.idade >= 15 && m.idade <= 35).length
+        );
 
         // Calcular progresso
-        setProgressHomens((response.filter((m) => m.sexo === "Masculino").length / response.length
+        setProgressHomens(
+          (
+            response.filter((m) => m.sexo === "Masculino").length /
+            response.length
           ).toFixed(2)
         );
-        setProgressMulheres((response.filter((m) => m.sexo === "Feminino").length / response.length
+        setProgressMulheres(
+          (
+            response.filter((m) => m.sexo === "Feminino").length /
+            response.length
           ).toFixed(2)
         );
-        setProgressCasais((response.filter((m) => m.estado_civil === "Casado").length / response.length
+        setProgressCasais(
+          (
+            response.filter((m) => m.estado_civil === "Casado").length /
+            response.length
           ).toFixed(2)
         );
-        setProgressSolterios((response.filter((m) => m.estado_civil === "Solteiro").length / response.length
+        setProgressSolterios(
+          (
+            response.filter((m) => m.estado_civil === "Solteiro").length /
+            response.length
           ).toFixed(2)
         );
-        setProgressJovens((response.filter((m) => m.idade >= 15 && m.idade <= 35).length / response.length
+        setProgressJovens(
+          (
+            response.filter((m) => m.idade >= 15 && m.idade <= 35).length /
+            response.length
           ).toFixed(2)
         );
-        setProgressMembro(((response.length / response.length) * 100).toFixed(2));
+        setProgressMembro(
+          ((response.length / response.length) * 100).toFixed(2)
+        );
       }
     } catch (error) {
       console.error("Erro ao buscar dados: ", error);
@@ -80,14 +102,10 @@ const Dashboard = () => {
       if (Array.isArray(response)) {
         // Filtra os membros que fazem aniversário no mês atual
         const aniversariantes = response
-          .map((membro) => {
-            const data = new Date(membro.data_nascimento + "T00:00:00");
-            const dia = data.getDate();
-            return {
-              nome: `${membro.nome} ${membro.sobrenome}`,
-              dia,
-            };
-          })
+          .map((membro) => ({
+            nome: `${membro.nome} ${membro.sobrenome}`,
+            dia: parseInt(moment(membro.data_nascimento).format('D')),
+          }))
           .sort((a, b) => a.dia - b.dia); // Ordena por dia do mês
 
         setAniversarianteDoMes(aniversariantes);
@@ -101,35 +119,35 @@ const Dashboard = () => {
   const downloadPDFReport = async () => {
     try {
       // Captura o elemento do dashboard
-      const dashboardElement = document.getElementById('dashboard-content');
+      const dashboardElement = document.getElementById("dashboard-content");
       if (!dashboardElement) {
         alert('Elemento "dashboard-content" não encontrado no DOM.');
         return;
       }
-      
+
       // Configurações do PDF
-      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdf = new jsPDF("p", "mm", "a4");
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
-      
+
       // Converte o elemento em canvas
       const canvas = await html2canvas(dashboardElement, {
         scale: 2, // Melhor qualidade
         backgroundColor: colors.primary[500], // Mantém a cor de fundo
       });
-      
+
       // Adiciona a imagem do canvas ao PDF
-      const imgData = canvas.toDataURL('image/png');
+      const imgData = canvas.toDataURL("image/png");
       const imgWidth = pageWidth;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      
-      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-      
+
+      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+
       // Faz o download
       pdf.save(`dashboard-relatorio-${new Date().toLocaleDateString()}.pdf`);
     } catch (error) {
-      console.error('Erro ao gerar PDF:', error);
-      alert('Erro ao gerar o relatório');
+      console.error("Erro ao gerar PDF:", error);
+      alert("Erro ao gerar o relatório");
     }
   };
 
@@ -139,14 +157,12 @@ const Dashboard = () => {
       if (Array.isArray(response)) {
         // Formata os eventos para exibição
         const eventosFormatados = response
-        .map(evento => {
-          const data = new Date(evento.inicio + "T00:00:00");
-          const dia = data.getDate();
-          return {
-            titulo: `${evento.titulo}`,
-            dia,
-          };
-        }).sort((a, b) => a.dia - b.dia); // Ordena por dia do mês
+          .map((evento) => ({
+            titulo: evento.titulo,
+            dia: parseInt(moment(evento.inicio).format('D')),
+            dataCompleta: evento.inicio
+          }))
+          .sort((a, b) => a.dia - b.dia); // Ordena por dia do mês
 
         setEventosDoMes(eventosFormatados);
       }
@@ -380,7 +396,8 @@ const Dashboard = () => {
             paddingLeft="15px"
             textAlign="center"
           >
-            Aniversariantes de {mesAtual.charAt(0).toUpperCase() + mesAtual.slice(1)}
+            Aniversariantes de{" "}
+            {mesAtual.charAt(0).toUpperCase() + mesAtual.slice(1)}
           </Typography>
 
           <Box
@@ -505,44 +522,44 @@ const Dashboard = () => {
               paddingRight: "15px",
             }}
           >
-            {Array.isArray(eventosDoMes) &&
-            eventosDoMes.length > 0 ? (
-              eventosDoMes.map((evento, index) => (
-                
-                <Box
-                  key={index}
-                  display="flex"
-                  alignItems="center"
-                  p="2px"
-                  borderBottom={`1px solid ${colors.grey[700]}`}
-                  sx={{
-                    "&:last-child": {
-                      borderBottom: "none",
-                    },
-                  }}
-                >
-                  <Typography
-                    variant="h6"
-                    color={colors.grey[100]}
-                    paddingLeft="10px"
+            {Array.isArray(eventosDoMes) && eventosDoMes.length > 0 ? (
+              eventosDoMes.map((evento, index) => {
+                return (
+                  <Box
+                    key={index}
+                    display="flex"
+                    alignItems="center"
+                    p="2px"
+                    borderBottom={`1px solid ${colors.grey[700]}`}
+                    sx={{
+                      "&:last-child": {
+                        borderBottom: "none",
+                      },
+                    }}
                   >
-                    <span
-                      style={{
-                        color: colors.greenAccent[500],
-                        fontWeight: "bold",
-                        marginRight: "10px",
-                      }}
+                    <Typography
+                      variant="h6"
+                      color={colors.grey[100]}
+                      paddingLeft="10px"
                     >
-                      {evento.dia}   -
-                    </span>
-                    <span
-                      style={{ color: colors.grey[100], fontWeight: "bold" }}
-                    >
-                      {evento.titulo}
-                    </span>
-                  </Typography>
-                </Box>
-              ))
+                      <span
+                        style={{
+                          color: colors.greenAccent[500],
+                          fontWeight: "bold",
+                          marginRight: "10px",
+                        }}
+                      >
+                        {evento.dia} - {/* Exibe a data formatada */}
+                      </span>
+                      <span
+                        style={{ color: colors.grey[100], fontWeight: "bold" }}
+                      >
+                        {evento.titulo}
+                      </span>
+                    </Typography>
+                  </Box>
+                );
+              })
             ) : (
               <Typography
                 variant="h6"
