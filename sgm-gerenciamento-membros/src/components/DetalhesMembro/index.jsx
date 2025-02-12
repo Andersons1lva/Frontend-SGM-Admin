@@ -1,7 +1,6 @@
-// DetalhesMembro.jsx
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Box, Button, Typography, Paper, Divider,useTheme } from '@mui/material';
+import { Box, Button, Typography, Paper, Divider, useTheme } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 import MembroService from "../../services/MembroService";
 import { tokens } from "../../styles/theme";
@@ -22,13 +21,19 @@ const DetalhesMembro = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [membro, setMembro] = useState(null);
+  const [idade, setIdade] = useState(null); // Estado para idade calculada
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const carregarDetalhes = async () => {
     try {
       const detalhes = await MembroService.buscarPorId(id);
-      setMembro(detalhes); 
+      setMembro(detalhes);
+
+      // Calcula a idade assim que os detalhes forem carregados
+      if (detalhes?.data_nascimento) {
+        setIdade(calcularIdade(detalhes.data_nascimento));
+      }
     } catch (error) {
       console.error("Erro ao buscar membros por id:", error);
     }
@@ -39,6 +44,28 @@ const DetalhesMembro = () => {
     carregarDetalhes();
   }, [id]);
 
+  // Função para calcular a idade com base na data de nascimento
+  const calcularIdade = (dataNascimento) => {
+    const hoje = new Date();
+    const nascimento = new Date(dataNascimento);
+    let idadeCalculada = hoje.getFullYear() - nascimento.getFullYear();
+    const mes = hoje.getMonth() - nascimento.getMonth();
+
+    // Ajusta a idade se o aniversário ainda não tiver passado no ano atual
+    if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
+      idadeCalculada--;
+    }
+
+    return idadeCalculada;
+  };
+
+  const formatarData = (dataString) => {
+    if (!dataString) return '-';
+    const data = new Date(dataString);
+    const [ano, mes, dia] = data.toISOString().split('T')[0].split('-');
+    return `${dia}/${mes}/${ano}`;
+  };
+
   if (!membro) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
@@ -47,51 +74,40 @@ const DetalhesMembro = () => {
     );
   }
 
-  // Função para formatar datas
-  const formatarData = (dataString) => {
-    if (!dataString) return '-';
-    const data = new Date(dataString);
-    return data.toLocaleDateString('pt-BR');
-  };
-
   return (
     <Box p={3}>
-      {/* Cabeçalho com botão de voltar */}
       <Button
         startIcon={<ArrowBack />}
         onClick={() => navigate(-1)}
         variant="contained"
-        sx={{ mb: 3,background: `${colors.primary[400]} !important` }}
+        sx={{ mb: 3, background: `${colors.primary[400]} !important` }}
       >
         Voltar
       </Button>
 
-      <Paper elevation={3} sx={{ p: 1.5, background: `${colors.primary[400]} !important`}}>
-        {/* Título */}
+      <Paper elevation={3} sx={{ p: 1.5, background: `${colors.primary[400]} !important` }}>
         <Typography variant="h1" gutterBottom>
           {membro.nome} {membro.sobrenome}
         </Typography>
 
-        {/* Informações Pessoais */}
-        <Typography variant="h4" color='secondary' gutterBottom sx={{ mt: 1 }}>
+        <Typography variant="h4" color="secondary" gutterBottom sx={{ mt: 1 }}>
           Informações Pessoais
         </Typography>
         <Box display="grid" gridTemplateColumns="repeat(auto-fit, minmax(100px, 1fr))" gap={2}>
-          <InfoField label="Idade" value={membro.idade} />
+          <InfoField label="Idade" value={idade} />
           <InfoField label="RG" value={membro.rg} />
           <InfoField label="CPF" value={membro.cpf} />
           <InfoField label="Estado Civil" value={membro.estado_civil} />
           <InfoField label="Nacionalidade" value={membro.nascionalidade} />
           <InfoField label="Naturalidade" value={membro.naturalidade} />
           <InfoField label="Sexo" value={membro.sexo} />
-          <InfoField label="Data de Nascimento" value={formatarData(membro.data_nascimento)} />          
+          <InfoField label="Data de Nascimento" value={formatarData(membro.data_nascimento)} />
           <InfoField label="Data de Casamento" value={formatarData(membro.data_casamento)} />
         </Box>
 
         <Divider sx={{ mt: 2, mb: 2 }} />
-        
-        {/* Informações de Contato */}
-        <Typography variant="h4" color='secondary' gutterBottom sx={{ mt: 1 }}>
+
+        <Typography variant="h4" color="secondary" gutterBottom sx={{ mt: 1 }}>
           Contato
         </Typography>
         <Box display="grid" gridTemplateColumns="repeat(auto-fit, minmax(100px, 1fr))" gap={3}>
@@ -101,9 +117,8 @@ const DetalhesMembro = () => {
         </Box>
 
         <Divider sx={{ mt: 2, mb: 2 }} />
-        
-        {/* Informações Familiares */}
-        <Typography variant="h4" color='secondary' gutterBottom sx={{ mt: 1 }}>
+
+        <Typography variant="h4" color="secondary" gutterBottom sx={{ mt: 1 }}>
           Informações Familiares
         </Typography>
         <Box display="grid" gridTemplateColumns="repeat(auto-fit, minmax(100px, 1fr))" gap={3}>
@@ -112,9 +127,8 @@ const DetalhesMembro = () => {
         </Box>
 
         <Divider sx={{ mt: 2, mb: 2 }} />
-        
-        {/* Informações Ministeriais */}
-        <Typography variant="h4" color='secondary' gutterBottom sx={{ mt: 1 }}>
+
+        <Typography variant="h4" color="secondary" gutterBottom sx={{ mt: 1 }}>
           Informações Ministeriais
         </Typography>
         <Box display="grid" gridTemplateColumns="repeat(auto-fit, minmax(100px, 1fr))" gap={3}>
@@ -124,9 +138,8 @@ const DetalhesMembro = () => {
         </Box>
 
         <Divider sx={{ mt: 2, mb: 2 }} />
-        
-        {/* Endereço */}
-        <Typography variant="h4" color='secondary' gutterBottom sx={{ mt: 1 }}>
+
+        <Typography variant="h4" color="secondary" gutterBottom sx={{ mt: 1 }}>
           Endereço
         </Typography>
         <Box display="grid" gridTemplateColumns="repeat(auto-fit, minmax(150px, 1fr))" gap={3}>
