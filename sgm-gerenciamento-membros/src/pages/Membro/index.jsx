@@ -1,4 +1,4 @@
-import { Box, useTheme} from "@mui/material";
+import { Box, useTheme, useMediaQuery } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../styles/theme";
 import { useState, useEffect } from "react";
@@ -6,19 +6,22 @@ import MembroService from "../../services/MembroService";
 import Button from "@mui/material/Button";
 import Header from "../../components/Header";
 import { useNavigate } from "react-router-dom";
-import Formulario from "../../pages/Formulario"
+import Formulario from "../../pages/Formulario";
+import EditIcon from "@mui/icons-material/Edit"; // Ícone de edição
+import DeleteIcon from "@mui/icons-material/Delete"; // Ícone de exclusão
 
 const Membro = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // Verifica se a tela é pequena (mobile)
 
-  const handleRowClick = (params, event) =>{
+  const handleRowClick = (params, event) => {
     if (event.target.tagName === "BUTTON") {
-      return;
+      return; // Ignora cliques em botões
     }
     navigate(`/detalhesMembro/${params.row.id}`);
-  }
+  };
 
   // Estado para armazenar os membros
   const [membro, setMembro] = useState([]);
@@ -27,10 +30,9 @@ const Membro = () => {
 
   // Função para buscar os membros da API
   const fetchMembros = async () => {
-    
     try {
       const data = await MembroService.getAllMembros();
-      setMembro(data); 
+      setMembro(data);
     } catch (error) {
       console.error("Erro ao buscar membros:", error);
     }
@@ -57,7 +59,7 @@ const Membro = () => {
       type: "text",
       headerAlign: "center",
       align: "center",
-      width: 50,
+      width: 80,
       sortable: true,
       resizable: false,
     },
@@ -94,32 +96,45 @@ const Membro = () => {
     {
       field: "actions",
       headerName: "Ações",
-      width: 50,
+      width: isMobile ? 110 : 170, // Largura ajustada para mobile
       headerAlign: "center",
       align: "center",
       sortable: false,
       filterable: false,
       resizable: false,
       disableColumnMenu: true,
-      minWidth: 170,
       renderCell: (params) => (
         <>
           <Button
             variant="contained"
             color="secondary"
             size="small"
-            style={{ marginRight: 10 }}
-            onClick={() => handleEdit(params.row.id)}
+            style={{
+              marginRight: isMobile ? 5 : 10, // Reduz o espaçamento em telas pequenas
+              width: isMobile ? "30px" : "auto", // Ajusta a largura do botão
+              minWidth: isMobile ? "30px" : "auto", // Garante que o botão não fique muito pequeno
+            }}
+            onClick={(event) => {
+              event.stopPropagation(); // Impede a propagação do evento
+              handleEdit(params.row.id);
+            }}
           >
-            Editar
+            {isMobile ? <EditIcon /> : "Editar"} {/* Mostra ícone ou texto */}
           </Button>
           <Button
             variant="contained"
             color="error"
             size="small"
-            onClick={() => handleDelete(params.row.id)}
+            style={{
+              width: isMobile ? "30px" : "auto", // Ajusta a largura do botão
+              minWidth: isMobile ? "30px" : "auto", // Garante que o botão não fique muito pequeno
+            }}
+            onClick={(event) => {
+              event.stopPropagation(); // Impede a propagação do evento
+              handleDelete(params.row.id);
+            }}
           >
-            Excluir
+            {isMobile ? <DeleteIcon /> : "Excluir"} {/* Mostra ícone ou texto */}
           </Button>
         </>
       ),
@@ -128,7 +143,7 @@ const Membro = () => {
 
   // Função para editar um membro
   const handleEdit = (membroId) => {
-    const membroParaEditar = membro.find((m)=> m.id === membroId);
+    const membroParaEditar = membro.find((m) => m.id === membroId);
     setMembroSelecionado(membroParaEditar);
     setModoEdicao(true);
   };
@@ -144,7 +159,7 @@ const Membro = () => {
       <Formulario
         initialMemberData={membroSelecionado}
         onSubmitSuccess={handleEditarSucesso}
-        modoEdicao ={true}
+        modoEdicao={true}
       />
     );
   }
@@ -170,8 +185,8 @@ const Membro = () => {
             border: "",
           },
           "& .MuiDataGrid-cell": {
-            borderBottom: "none",            
-            paddingLeft:"15px",
+            borderBottom: "none",
+            paddingLeft: "15px",
           },
           "& .name-column--cell": {
             // color: colors.greenAccent[300],
@@ -187,7 +202,6 @@ const Membro = () => {
           "& ::-webkit-scrollbar": {
             width: "10px",
             height: "10px",
-            
           },
           "& ::-webkit-scrollbar-track": {
             backgroundColor: `${colors.primary[400]} !important`,
@@ -205,11 +219,15 @@ const Membro = () => {
           },
           "& .MuiCheckbox-root": {
             color: `${colors.greenAccent[200]} !important`,
-          }
+          },
         }}
       >
         {/* Agora usando o estado 'team' para preencher a tabela */}
-        <DataGrid rows={membro} columns={columns} onRowClick={(params,event) =>handleRowClick(params,event)} />
+        <DataGrid
+          rows={membro}
+          columns={columns}
+          onRowClick={(params, event) => handleRowClick(params, event)}
+        />
       </Box>
     </Box>
   );

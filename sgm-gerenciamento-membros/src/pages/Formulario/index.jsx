@@ -1,10 +1,13 @@
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, TextField, useTheme } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../components/Header";
 import { useState } from "react";
 import MembroService from "../../services/MembroService";
+import { ArrowBack } from '@mui/icons-material';
+import { useParams, useNavigate } from 'react-router-dom';
+import { tokens } from "../../styles/theme";
 
 // Regex patterns - agora todos utilizados no schema
 const PHONE_REGEX = /^\([1-9]{2}\) (?:[2-8]|9[0-9])[0-9]{3}-[0-9]{4}$/;
@@ -61,6 +64,10 @@ const Form = ({ initialMemberData, onSubmitSuccess }) => {
   const [showAddressFields, setShowAddressFields] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const navigate = useNavigate();
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+  
 
   const isEditMode = Boolean(initialMemberData);
 
@@ -141,6 +148,14 @@ const Form = ({ initialMemberData, onSubmitSuccess }) => {
   return (
     <Box m="8px">
       <Header title={isEditMode ? "EDITAR MEMBRO" : "NOVO MEMBRO"} />
+      <Button
+        startIcon={<ArrowBack />}
+        onClick={() => navigate(-1)}
+        variant="contained"
+        sx={{ mb: 2, background: `${colors.primary[400]} !important` }}
+      >
+        
+      </Button>
       {successMessage && (
         <div style={{ color: "orange" }}>{successMessage}</div>
       )}{" "}

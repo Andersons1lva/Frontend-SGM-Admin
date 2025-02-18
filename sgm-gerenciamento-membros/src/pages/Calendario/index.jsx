@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
+import 'moment/dist/locale/pt-br'; 
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import {
   Box,

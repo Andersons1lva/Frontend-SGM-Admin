@@ -46,10 +46,10 @@ const Dashboard = () => {
         setTotalHomens(response.filter((m) => m.sexo === "Masculino").length);
         setTotalMulheres(response.filter((m) => m.sexo === "Feminino").length);
         setTotalCasais(
-          response.filter((m) => m.estado_civil === "Casado").length
+          response.filter((m) => m.estado_civil.includes("Casado")|| m.estado_civil.includes("Casada")).length
         );
         setTotalSolteiros(
-          response.filter((m) => m.estado_civil === "Solteiro").length
+          response.filter((m) => m.estado_civil.includes("Solteiro") || m.estado_civil.includes("Solteira") ).length
         );
         setJovens(
           response.filter((m) => m.idade >= 15 && m.idade <= 35).length
@@ -299,7 +299,7 @@ const Dashboard = () => {
         >
           <StatBox
             title={totalCasais?.toString() || "0"}
-            subtitle="Casais"
+            subtitle="Casados(a)"
             progress={progressCasais}
             increase={`${(progressCasais * 100).toFixed(0)}%`}
             icon={
@@ -319,7 +319,7 @@ const Dashboard = () => {
         >
           <StatBox
             title={totalSolteiros?.toString() || "0"}
-            subtitle="Solteiros"
+            subtitle="Solteiros(a)"
             progress={progressSolteiros}
             increase={`${(progressSolteiros * 100).toFixed(0)}%`}
             icon={
