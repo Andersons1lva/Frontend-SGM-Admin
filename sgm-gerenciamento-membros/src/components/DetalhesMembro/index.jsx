@@ -30,9 +30,17 @@ const DetalhesMembro = () => {
       const detalhes = await MembroService.buscarPorId(id);
       setMembro(detalhes);
 
-      // Calcula a idade assim que os detalhes forem carregados
       if (detalhes?.data_nascimento) {
-        setIdade(calcularIdade(detalhes.data_nascimento));
+        // Certifique-se que a data está em um formato consistente
+        const dataFormatada = new Date(detalhes.data_nascimento);
+        
+        // Verifique se a data é válida antes de calcular
+        if (!isNaN(dataFormatada.getTime())) {
+          setIdade(calcularIdade(dataFormatada));
+          console.log("Idade calculada:", calcularIdade(dataFormatada)); 
+        } else {
+          console.error("Data de nascimento inválida:", detalhes.data_nascimento);
+        }
       }
     } catch (error) {
       console.error("Erro ao buscar membros por id:", error);
@@ -80,9 +88,9 @@ const DetalhesMembro = () => {
         startIcon={<ArrowBack />}
         onClick={() => navigate(-1)}
         variant="contained"
-        sx={{ mb: 3, background: `${colors.primary[400]} !important` }}
+        sx={{ mb: 3, background: `${colors.primary[400]} !important`,
+        color: colors.grey[100] }}
       >
-        Voltar
       </Button>
 
       <Paper elevation={3} sx={{ p: 1.5, background: `${colors.primary[400]} !important` }}>

@@ -1,4 +1,10 @@
-import { Box, Button, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
 import { tokens } from "../../styles/theme";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import EmojiPeopleIcon from "@mui/icons-material/EmojiPeople";
@@ -36,6 +42,7 @@ const Dashboard = () => {
   const [progressMembro, setProgressMembro] = useState(0);
   const [eventosDoMes, setEventosDoMes] = useState([]);
   const mesAtual = new Date().toLocaleString("pt-BR", { month: "long" });
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const fetchAllData = async () => {
     try {
@@ -46,10 +53,18 @@ const Dashboard = () => {
         setTotalHomens(response.filter((m) => m.sexo === "Masculino").length);
         setTotalMulheres(response.filter((m) => m.sexo === "Feminino").length);
         setTotalCasais(
-          response.filter((m) => m.estado_civil.includes("Casado")|| m.estado_civil.includes("Casada")).length
+          response.filter(
+            (m) =>
+              m.estado_civil.includes("Casado") ||
+              m.estado_civil.includes("Casada")
+          ).length
         );
         setTotalSolteiros(
-          response.filter((m) => m.estado_civil.includes("Solteiro") || m.estado_civil.includes("Solteira") ).length
+          response.filter(
+            (m) =>
+              m.estado_civil.includes("Solteiro") ||
+              m.estado_civil.includes("Solteira")
+          ).length
         );
         setJovens(
           response.filter((m) => m.idade >= 15 && m.idade <= 35).length
@@ -104,7 +119,7 @@ const Dashboard = () => {
         const aniversariantes = response
           .map((membro) => ({
             nome: `${membro.nome} ${membro.sobrenome}`,
-            dia: parseInt(moment(membro.data_nascimento).format('D')),
+            dia: parseInt(moment(membro.data_nascimento).format("D")),
           }))
           .sort((a, b) => a.dia - b.dia); // Ordena por dia do mês
 
@@ -159,8 +174,8 @@ const Dashboard = () => {
         const eventosFormatados = response
           .map((evento) => ({
             titulo: evento.titulo,
-            dia: parseInt(moment(evento.inicio).format('D')),
-            dataCompleta: evento.inicio
+            dia: parseInt(moment(evento.inicio).format("D")),
+            dataCompleta: evento.inicio,
           }))
           .sort((a, b) => a.dia - b.dia); // Ordena por dia do mês
 
@@ -190,13 +205,12 @@ const Dashboard = () => {
             sx={{
               backgroundColor: colors.blueAccent[700],
               color: colors.grey[100],
-              fontSize: "14px",
+              fontSize: "10px",
               fontWeight: "bold",
-              padding: "10px 20px",
+              padding: "10px 5px",
             }}
           >
-            <DownloadOutlinedIcon sx={{ mr: "10px" }} />
-            Baixar relatórios
+            {isMobile ? <DownloadOutlinedIcon /> : "Baixar relatórios"}
           </Button>
         </Box>
       </Box>
@@ -301,7 +315,7 @@ const Dashboard = () => {
             title={totalCasais?.toString() || "0"}
             subtitle="Casados(a)"
             progress={progressCasais}
-            increase={`${(progressCasais * 100).toFixed(0)}%`}
+            // increase={`${(progressCasais * 100).toFixed(0)}%`}
             icon={
               <SupervisorAccountIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}

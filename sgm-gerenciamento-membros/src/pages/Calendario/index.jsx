@@ -102,7 +102,6 @@ const CalendarComponent = () => {
             width: isTablet ? "100%" : "300px",
             maxHeight: isTablet ? "30vh" : "73.3vh",
             overflowY: "auto",
-            mt: 2,
             position: "relative",
             paddingRight: "16px",
             "&::-webkit-scrollbar": {

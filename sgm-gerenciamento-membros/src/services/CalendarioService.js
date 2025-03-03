@@ -35,7 +35,7 @@ export const CalendarioService =  {
             return response.data
         } catch (error) {
             console.error('Erro ao buscar eventos do mês:', error);
-            throw error;
+            return [];
         }
     },
     

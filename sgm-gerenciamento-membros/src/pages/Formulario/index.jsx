@@ -152,7 +152,8 @@ const Form = ({ initialMemberData, onSubmitSuccess }) => {
         startIcon={<ArrowBack />}
         onClick={() => navigate(-1)}
         variant="contained"
-        sx={{ mb: 2, background: `${colors.primary[400]} !important` }}
+        sx={{ mb: 2, background: `${colors.primary[400]} !important`,
+        color: colors.grey[100] }}
       >
         
       </Button>
