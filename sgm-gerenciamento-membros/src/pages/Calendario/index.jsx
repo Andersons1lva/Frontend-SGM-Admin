@@ -39,7 +39,7 @@ const CalendarComponent = () => {
         title: evento.titulo,
         start: new Date(evento.inicio),
         end: new Date(evento.fim),
-        allDay: evento.diaTodo
+        allDay: true,
       }));
       setCurrentEvents(formattedEvents);
     } catch (error) {
@@ -48,15 +48,26 @@ const CalendarComponent = () => {
     }
   };
 
+  const ajustarParaFusoHorario = (data) => {
+    const offset = data.getTimezoneOffset() * 60000; // Diferença do UTC em ms
+    return new Date(data.getTime() - offset);
+  };
+
+
   const handleSelectSlot = async (slotInfo) => {
     const title = prompt("Por favor, digite um título para seu evento");
     if (title) {
       try {
+
+        const inicio = ajustarParaFusoHorario(moment(slotInfo.start).startOf("day").toDate());
+        const fim = ajustarParaFusoHorario(moment(slotInfo.start).endOf("day").subtract(1, "ms").toDate());
+        
+
         const newEvento = {
           title,
-          start: slotInfo.start,
-          end: slotInfo.end,
-          allDay: slotInfo.allDay
+          start: inicio,
+          end: fim,
+          allDay: true,
         };
 
         const createdEvent = await calendarioService.criarEventos(newEvento);
@@ -66,7 +77,7 @@ const CalendarComponent = () => {
           title: createdEvent.titulo,
           start: moment(createdEvent.inicio).toDate(),
           end: moment(createdEvent.fim).toDate(),
-          allDay: createdEvent.diaTodo,
+          allDay: true,
         }]);
       } catch (error) {
         console.error("Erro ao criar evento:", error);

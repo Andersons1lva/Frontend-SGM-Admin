@@ -45,7 +45,7 @@ export const CalendarioService =  {
                 titulo: eventoData.title,
                 inicio: eventoData.start,
                 fim: eventoData.end,
-                dia_todo: eventoData.allDay,
+                dia_todo: eventoData.allDay ?? true,
             };
             const response = await axios.post(EVENTO_URL, eventoPayload);
             return response.data;
