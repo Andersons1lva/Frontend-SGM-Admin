@@ -28,7 +28,15 @@ const Topbar = ({ isCollapsed, toggleSidebar }) => {
   };
 
   return (
-    <Box display="flex" justifyContent="space-between" p={2}>
+    <Box display="flex" justifyContent="space-between" p={2}
+      sx={{
+        position: "fixed",
+        top: 0,
+        right: 0,
+        width: `calc(100% - ${isCollapsed ? "80px" : "250px"})`,        
+        zIndex: 2000,
+      }}
+    >
       {/* SEARCH BAR AND MENU BUTTON */}
       <Box display="flex" alignItems="center">
         {/* Botão de menu hambúrguer (visível apenas em mobile ou quando a sidebar está colapsada) */}

@@ -5,8 +5,8 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../components/Header";
 import { useState } from "react";
 import MembroService from "../../services/MembroService";
-import { ArrowBack } from '@mui/icons-material';
-import { useParams, useNavigate } from 'react-router-dom';
+import { ArrowBack } from "@mui/icons-material";
+import { useParams, useNavigate } from "react-router-dom";
 import { tokens } from "../../styles/theme";
 
 // Regex patterns - agora todos utilizados no schema
@@ -19,10 +19,7 @@ const CEP_REGEX = /^\d{5}-\d{3}$/;
 const validationSchema = yup.object().shape({
   nome: yup.string().required("Nome é obrigatório"),
   sobrenome: yup.string().required("Sobrenome é obrigatório"),
-  email: yup
-    .string()
-    .email("Email inválido")
-    .required("Email é obrigatório"),
+  email: yup.string().email("Email inválido").required("Email é obrigatório"),
   idade: yup
     .number()
     .typeError("Idade deve ser um número")
@@ -55,8 +52,8 @@ const validationSchema = yup.object().shape({
     cep: yup
       .string()
       .matches(CEP_REGEX, "Formato: 99999-999")
-      .required("CEP é obrigatório")
-  })
+      .required("CEP é obrigatório"),
+  }),
 });
 
 const Form = ({ initialMemberData, onSubmitSuccess }) => {
@@ -67,25 +64,24 @@ const Form = ({ initialMemberData, onSubmitSuccess }) => {
   const navigate = useNavigate();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  
 
   const isEditMode = Boolean(initialMemberData);
 
-  const formataDataParaBrasil = (dateString) =>{
-      if (!dateString) return "";
+  const formataDataParaBrasil = (dateString) => {
+    if (!dateString) return "";
 
-      try{
-        const [yaer, month, day] = dateString.split('-');
-        if (!day || !month || !yaer) return dateString;
-        return `${day}/${month}/${yaer}`
-      }catch{
-        return dateString;
-      }
+    try {
+      const [yaer, month, day] = dateString.split("-");
+      if (!day || !month || !yaer) return dateString;
+      return `${day}/${month}/${yaer}`;
+    } catch {
+      return dateString;
+    }
   };
 
   const formatInitialData = (data) => {
     if (!data) return initialValues;
-    
+
     return {
       nome: data.nome || "",
       sobrenome: data.sobrenome || "",
@@ -93,11 +89,12 @@ const Form = ({ initialMemberData, onSubmitSuccess }) => {
       idade: data.idade || "",
       numero_celular: data.numero_celular || "",
       telefone_fixo: data.telefone_fixo || "",
+      matricula: data.matricula || "",
       rg: data.rg || "",
       cpf: data.cpf || "",
       nome_pai: data.nome_pai || "",
       data_nascimento: formataDataParaBrasil(data.data_nascimento) || "",
-      data_batismo:formataDataParaBrasil(data.data_batismo) || "",
+      data_batismo: formataDataParaBrasil(data.data_batismo) || "",
       nome_mae: data.nome_mae || "",
       naturalidade: data.naturalidade || "",
       nascionalidade: data.nascionalidade || "",
@@ -106,6 +103,9 @@ const Form = ({ initialMemberData, onSubmitSuccess }) => {
       estado_civil: data.estado_civil || "",
       data_casamento: formataDataParaBrasil(data.data_casamento) || "",
       tempo_membro: data.tempo_membro || "",
+      situacao: data.situacao || "",
+      data_consagracao: formataDataParaBrasil(data.data_consagracao) || "",
+      igreja_anterior: data.igreja_anterior || "",
       endereco: {
         rua: data.endereco?.rua || "",
         numero: data.endereco?.numero || "",
@@ -116,7 +116,7 @@ const Form = ({ initialMemberData, onSubmitSuccess }) => {
     };
   };
 
-  const handleSubmit = async (values,{ resetForm }) => {
+  const handleSubmit = async (values, { resetForm }) => {
     setError("");
 
     try {
@@ -136,8 +136,8 @@ const Form = ({ initialMemberData, onSubmitSuccess }) => {
         onSubmitSuccess();
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 
-                          'Erro ao processar a requisição';
+      const errorMessage =
+        error.response?.data?.message || "Erro ao processar a requisição";
       setError(errorMessage);
       console.error("Erro:", error);
     } finally {
@@ -148,15 +148,6 @@ const Form = ({ initialMemberData, onSubmitSuccess }) => {
   return (
     <Box m="8px">
       <Header title={isEditMode ? "EDITAR MEMBRO" : "NOVO MEMBRO"} />
-      <Button
-        startIcon={<ArrowBack />}
-        onClick={() => navigate(-1)}
-        variant="contained"
-        sx={{ mb: 2, background: `${colors.primary[400]} !important`,
-        color: colors.grey[100] }}
-      >
-        
-      </Button>
       {successMessage && (
         <div style={{ color: "orange" }}>{successMessage}</div>
       )}{" "}
@@ -165,7 +156,6 @@ const Form = ({ initialMemberData, onSubmitSuccess }) => {
           {error}
         </Box>
       )}
-
       <Formik
         onSubmit={handleSubmit}
         initialValues={formatInitialData(initialMemberData)}
@@ -181,6 +171,29 @@ const Form = ({ initialMemberData, onSubmitSuccess }) => {
           handleSubmit,
         }) => (
           <form onSubmit={handleSubmit}>
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              mt="1px"
+              marginBottom="5px"
+            >
+              <Button
+                startIcon={<ArrowBack />}
+                onClick={() => navigate(-1)}
+                variant="contained"
+                sx={{
+                  background: `${colors.primary[400]} !important`,
+                  color: colors.grey[100],
+                  minWidth: "40px", // Define uma largura mínima
+                  "& .MuiButton-startIcon": {
+                    margin: 0, // Remove a margem padrão do startIcon
+                  },
+                }}
+              ></Button>
+              <Button type="submit" color="secondary" variant="contained">
+                {isEditMode ? "Atualizar" : "Criar"} Membro
+              </Button>
+            </Box>
             <Box
               display="grid"
               gap="8px"
@@ -279,7 +292,7 @@ const Form = ({ initialMemberData, onSubmitSuccess }) => {
                 name="endereco.rua"
                 error={!!touched.endereco?.rua && !!errors.endereco?.rua}
                 helperText={touched.endereco?.rua && errors.endereco?.rua}
-                sx={{ gridColumn: "span 4" }}
+                sx={{ gridColumn: "span 2" }}
                 onClick={() => setShowAddressFields(true)} // Mostra campos adicionais ao clicar
               />
               {/* Campos adicionais de endereço (somente exibidos se showAddressFields for true) */}
@@ -354,6 +367,20 @@ const Form = ({ initialMemberData, onSubmitSuccess }) => {
                 </>
               )}
               {/* Outros campos do formulário */}
+
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
+                label="Matrícula"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.matricula}
+                name="matricula"
+                error={!!touched.matricula && !!errors.matricula}
+                helperText={touched.matricula && errors.matricula}
+                sx={{ gridColumn: "span 2" }}
+              />
               <TextField
                 fullWidth
                 variant="filled"
@@ -391,7 +418,20 @@ const Form = ({ initialMemberData, onSubmitSuccess }) => {
                 name="nome_pai"
                 error={!!touched.nome_pai && !!errors.nome_pai}
                 helperText={touched.nome_pai && errors.nome_pai}
-                sx={{ gridColumn: "span 4" }}
+                sx={{ gridColumn: "span 2" }}
+              />
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
+                label="Nome da Mãe"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.nome_mae}
+                name="nome_mae"
+                error={!!touched.nome_mae && !!errors.nome_mae}
+                helperText={touched.nome_mae && errors.nome_mae}
+                sx={{ gridColumn: "span 2" }}
               />
               <TextField
                 fullWidth
@@ -418,19 +458,6 @@ const Form = ({ initialMemberData, onSubmitSuccess }) => {
                 error={!!touched.data_batismo && !!errors.data_batismo}
                 helperText={touched.data_batismo && errors.data_batismo}
                 sx={{ gridColumn: "span 2" }}
-              />
-              <TextField
-                fullWidth
-                variant="filled"
-                type="text"
-                label="Nome da Mãe"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.nome_mae}
-                name="nome_mae"
-                error={!!touched.nome_mae && !!errors.nome_mae}
-                helperText={touched.nome_mae && errors.nome_mae}
-                sx={{ gridColumn: "span 4" }}
               />
               <TextField
                 fullWidth
@@ -484,12 +511,8 @@ const Form = ({ initialMemberData, onSubmitSuccess }) => {
                 onChange={handleChange}
                 value={values.sexo}
                 name="sexo"
-                error={
-                  !!touched.sexo && !!errors.sexo
-                }
-                helperText={
-                  touched.sexo && errors.sexo
-                }
+                error={!!touched.sexo && !!errors.sexo}
+                helperText={touched.sexo && errors.sexo}
                 sx={{ gridColumn: "span 2" }}
               />
               <TextField
@@ -527,20 +550,60 @@ const Form = ({ initialMemberData, onSubmitSuccess }) => {
                 onChange={handleChange}
                 value={values.tempo_membro}
                 name="tempo_membro"
-                error={
-                  !!touched.tempo_membro && !!errors.tempo_membro
-                }
-                helperText={
-                  touched.tempo_membro && errors.tempo_membro
-                }
-                sx={{ gridColumn: "span 4" }}
+                error={!!touched.tempo_membro && !!errors.tempo_membro}
+                helperText={touched.tempo_membro && errors.tempo_membro}
+                sx={{ gridColumn: "span 2" }}
+              />
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
+                label="Situação"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.situacao}
+                name="situacao"
+                error={!!touched.situacao && !!errors.situacao}
+                helperText={touched.situacao && errors.situacao}
+                sx={{ gridColumn: "span 2" }}
+              />
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
+                label="Data de Consagração"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.data_consagracao}
+                name="data_consagracao"
+                error={!!touched.data_consagracao && !!errors.data_consagracao}
+                helperText={touched.data_consagracao && errors.data_consagracao}
+                sx={{ gridColumn: "span 2" }}
+              />
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
+                label="Igreja Anterior"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.igreja_anterior}
+                name="igreja_anterior"
+                error={!!touched.igreja_anterior && !!errors.igreja_anterior}
+                helperText={touched.igreja_anterior && errors.igreja_anterior}
+                sx={{ gridColumn: "span 2" }}
               />
             </Box>
-            <Box display="flex" justifyContent="end" mt="8.6px" marginBottom="4.6px">
+            {/* <Box
+              display="flex"
+              justifyContent="end"
+              mt="8.6px"
+              marginBottom="4.6px"
+            >
               <Button type="submit" color="secondary" variant="contained">
                 {isEditMode ? "Atualizar" : "Criar"} Membro
               </Button>
-            </Box>
+            </Box> */}
           </form>
         )}
       </Formik>
@@ -556,6 +619,7 @@ const initialValues = {
   numero_celular: "",
   telefone_fixo: "",
   rg: "",
+  matricula: "",
   cpf: "",
   nome_pai: "",
   data_nascimento: "",
@@ -567,6 +631,9 @@ const initialValues = {
   sexo: "",
   estado_civil: "",
   data_casamento: "",
+  situacao: "",
+  igreja_anterior: "",
+  data_consagracao: "",
   tempo_membro: "",
   endereco: {
     rua: "",

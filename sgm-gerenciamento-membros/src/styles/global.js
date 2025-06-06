@@ -57,40 +57,45 @@ export default createGlobalStyle`
         position: relative;
         height: 100vh;
         width: 100%;
+        overflow: hidden; /* Previne scroll duplo */
     }
 
     /* Estilos para a Sidebar */
     .sidebar {
-        height: 100%;
+        height: 100vh;
         position: fixed;
         left: 0;
         top: 0;
-        /* Ajuste a largura conforme necessário */
-        width: 250px;
+        width: ${props => props.isCollapsed ? '80px' : '250px'};
+        transition: width 0.3s ease;
+        z-index: 1000;
+    }
+    .topbar {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: calc(100% - ${props => props.isCollapsed ? '80px' : '250px'});
+        height: 64px;
+        z-index: 1000;
+        background: ${({ theme }) => theme.COLORS.BACKGROUND_900};
+        transition: width 0.3s ease;
     }
 
-    /* Estilos para o container principal */
     .content {
         flex: 1;
         display: flex;
         flex-direction: column;
-        /* Desloca o conteúdo para não sobrepor a sidebar */
-        margin-left: 0px;
         min-height: 100vh;
+        padding-top: 64px; /* Altura da topbar */
+        overflow-y: auto;
+        transition: margin-left 0.3s ease;
     }
 
-    /* Estilos para a Topbar */
-    .topbar {
-        width: 100%;
-        position: sticky;
-        top: 0;
-        z-index: 2;
-    }
+   
 
     /* Container para o conteúdo principal abaixo da topbar */
     .main-content {
-        flex: 1;
         padding: 20px;
-        overflow-y: auto;
+        margin-top: 64px;
     }
 `;

@@ -32,14 +32,24 @@ const Dashboard = () => {
   const [totalMulheres, setTotalMulheres] = useState(0);
   const [totalCasais, setTotalCasais] = useState(0);
   const [totalSolteiros, setTotalSolteiros] = useState(0);
-  const [aniversarianteDoMes, setAniversarianteDoMes] = useState(0);
+  const [totalIdosos, setTotalIdosos] = useState(0);
+  const [totalObreiros, setTotalObreiros] = useState(0);
+  const [totalTransferidos, setTotalTransferidos] = useState(0);
+  const [totalFalecidos, setTotalFalecidos] = useState(0);
+  const [totalDisciplinados, setTotalDisciplinados] = useState(0);
+  const [aniversarianteDoMes, setAniversarianteDoMes] = useState([]);
   const [jovens, setJovens] = useState(0);
   const [progressHomens, setProgressHomens] = useState(0);
   const [progressMulheres, setProgressMulheres] = useState(0);
   const [progressJovens, setProgressJovens] = useState(0);
   const [progressCasais, setProgressCasais] = useState(0);
-  const [progressSolteiros, setProgressSolterios] = useState(0);
+  const [progressSolteiros, setProgressSolteiros] = useState(0);
   const [progressMembro, setProgressMembro] = useState(0);
+  const [progressIdosos, setProgressIdosos] = useState(0);
+  const [progressObreiros, setProgressObreiros] = useState(0);
+  const [progressTransferidos, setProgressTransferidos] = useState(0);
+  const [progressFalecidos, setProgressFalecidos] = useState(0);
+  const [progressDisciplinados, setProgressDisciplinados] = useState(0);
   const [eventosDoMes, setEventosDoMes] = useState([]);
   const mesAtual = new Date().toLocaleString("pt-BR", { month: "long" });
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -52,6 +62,19 @@ const Dashboard = () => {
         setMemberCount(response.length);
         setTotalHomens(response.filter((m) => m.sexo === "Masculino").length);
         setTotalMulheres(response.filter((m) => m.sexo === "Feminino").length);
+        setTotalIdosos(calcularIdosos(response));
+        setTotalObreiros(
+          response.filter((m) => m.funcao_ministerial === "Pastor" || m.funcao_ministerial === "Evangelista" || m.funcao_ministerial === "Presbítero" || m.funcao_ministerial === "Diácono" || m.funcao_ministerial === "Auxiliar de Trabalho").length
+        );
+        setTotalTransferidos(
+          response.filter((m) => m.situacao === "Transferido" || m.situacao === "Transferida").length
+        );
+        setTotalFalecidos(
+          response.filter((m) => m.situacao === "Falecido" || m.situacao === "Falecida").length
+        );
+        setTotalDisciplinados(
+          response.filter((m) => m.situacao === "Disciplinado" || m.situacao === "Disciplinada").length
+        );
         setTotalCasais(
           response.filter(
             (m) =>
@@ -89,7 +112,7 @@ const Dashboard = () => {
             response.length
           ).toFixed(2)
         );
-        setProgressSolterios(
+        setProgressSolteiros(
           (
             response.filter((m) => m.estado_civil === "Solteiro").length /
             response.length
@@ -101,6 +124,36 @@ const Dashboard = () => {
             response.length
           ).toFixed(2)
         );
+        setProgressIdosos(
+          (
+            response.filter((m) => m.idade >= 60).length /
+            response.length
+          ).toFixed(2)
+        );
+        setProgressObreiros(
+          (
+            response.filter((m) => m.funcao_ministerial === "PASTOR" || m.funcao_ministerial === "PRESBÍTERO" || m.funcao_ministerial === "DIACONO" || m.funcao_ministerial === "EVANGELISTA" || m.funcao_ministerial === "AUXILIAR DE TRABALHO").length /
+            response.length
+          ).toFixed(2)
+        );
+        setProgressTransferidos(
+          (
+            response.filter((m) => m.situacao === "Transferido").length /
+            response.length
+          ).toFixed(2)
+        );
+        setProgressFalecidos(
+          (
+            response.filter((m) => m.situacao === "Falecido").length /
+            response.length
+          ).toFixed(2)
+        );
+        setProgressDisciplinados(
+          (
+            response.filter((m) => m.situacao === "Disciplinado").length /
+            response.length
+          ).toFixed(2)
+        );
         setProgressMembro(
           ((response.length / response.length) * 100).toFixed(2)
         );
@@ -108,6 +161,15 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Erro ao buscar dados: ", error);
     }
+  };
+
+  const calcularIdosos = (membros) => {
+    const dataAtual = new Date();
+    return membros.filter((membro) => {
+      const dataNascimento = new Date(membro.data_nascimento);
+      const idade = dataAtual.getFullYear() - dataNascimento.getFullYear();
+      return idade >= 60;
+    }).length;
   };
 
   const fetchAniversarianteDoMes = async () => {
@@ -352,10 +414,10 @@ const Dashboard = () => {
           borderRadius="8px"
         >
           <StatBox
-            title={"0"}
-            subtitle=""
-            progress="0.80"
-            increase="+43%"
+            title={totalIdosos?.toString() || "0"}
+            subtitle="Idosos(a)"
+            progress={progressIdosos}
+            increase={`${(progressIdosos * 100).toFixed(0)}%`}
             icon={
               <BoyIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -372,10 +434,70 @@ const Dashboard = () => {
           borderRadius="8px"
         >
           <StatBox
-            title={"0"}
-            subtitle=""
-            progress="0.80"
-            increase="+43%"
+            title={totalTransferidos?.toString() || "0"}
+            subtitle="Transferidos(a)"
+            progress={progressTransferidos}
+            increase={`${(progressTransferidos * 100).toFixed(0)}%`}
+            icon={
+              <BoyIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+              />
+            }
+          />
+        </Box>
+        <Box
+          gridColumn="span 3"
+          backgroundColor={colors.primary[400]}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          borderRadius="8px"
+        >
+          <StatBox
+            title={totalFalecidos?.toString() || "0"}
+            subtitle="Falecidos(a)"
+            progress={progressFalecidos}
+            increase={`${(progressFalecidos * 100).toFixed(0)}%`}
+            icon={
+              <BoyIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+              />
+            }
+          />
+        </Box>
+        <Box
+          gridColumn="span 3"
+          backgroundColor={colors.primary[400]}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          borderRadius="8px"
+        >
+          <StatBox
+            title={totalDisciplinados?.toString() || "0"}
+            subtitle="Disciplinados(a)"
+            progress={progressDisciplinados}
+            increase={`${(progressDisciplinados * 100).toFixed(0)}%`}
+            icon={
+              <BoyIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+              />
+            }
+          />
+        </Box>
+        <Box
+          gridColumn="span 3"
+          backgroundColor={colors.primary[400]}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          borderRadius="8px"
+        >
+          <StatBox
+            title={totalObreiros?.toString() || "0"}
+            subtitle="Obreiros"
+            progress={progressObreiros}
+            increase={`${(progressObreiros * 100).toFixed(0)}%`}
             icon={
               <BoyIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -438,7 +560,7 @@ const Dashboard = () => {
             }}
           >
             {Array.isArray(aniversarianteDoMes) &&
-            aniversarianteDoMes.length > 0 ? (
+              aniversarianteDoMes.length > 0 ? (
               aniversarianteDoMes.map((aniversariante, index) => (
                 <Box
                   key={index}
